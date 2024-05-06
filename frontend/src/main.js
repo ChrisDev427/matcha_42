@@ -8,10 +8,11 @@ import '@fortawesome/fontawesome-free/js/all.js'
 // Vue-Router -----------------------------------------------------------------------------------------
 import { createRouter, createWebHashHistory } from 'vue-router';
 import HomePage from './pages/HomePage.vue';
+import CreateAccount from './pages/CreateAccount.vue';
 
 const routes = [
     { path: '/', component: HomePage },
-    // { path: '/RestaurantView/:name', name: 'RestaurantView', component: RestaurantView },
+    { path: '/CreateAccount/', name: 'CreateAccount', component: CreateAccount },
 ]
 
 const router = createRouter({
@@ -33,7 +34,7 @@ const i18n = createI18n({
   locale: 'en',
   messages: {
     en: {
-      accountCreate: 'Create account',
+      accountCreate_btn: 'Create account',
       connect: 'Log in',
       disconnect: 'Log out',
       contactUs: 'To Contact Us',
@@ -42,7 +43,7 @@ const i18n = createI18n({
       // autres clés et traductions pour l'anglais
     },
     fr: {
-      accountCreate: 'Créer un compte',
+      accountCreate_btn: 'Créer un compte',
       connect: 'Connexion',
       disconnect: 'Déonnexion',
       contactUs: 'Nous Contacter',

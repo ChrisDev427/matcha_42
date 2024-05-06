@@ -98,7 +98,7 @@ export default {
   }
   @media (min-width: 200px) and (max-width: 1115px) {
     width: 90vw;
-    margin: 10px 0 10px 0;
+    margin: 10px 0 0px 0;
     padding: 15px 0 25px 0;
     h1 {
       padding-bottom: 10px;

@@ -22,10 +22,11 @@ export default {
 
 <style lang=scss>
 .about--project {
-  width: 70%;
+  width: 60%;
   font-size: 0.8rem;
   font-weight: 400;
   color: var(--gray);
+  padding: 0 15px 0 15px;
 
   margin-left: 10px;
   @media (min-width: 200px) and (max-width: 1115px) {
