@@ -2,9 +2,13 @@ const mongoose = require('mongoose');
 const Schema = mongoose.Schema;
 
 const userSchema = new Schema({
+  username: { type: String, required: true, unique: true },
+  password: { type: String, required: true },
   firstName: { type: String, required: true },
   lastName: { type: String, required: true },
   email: { type: String, required: true, unique: true },
+  verified: { type: Boolean, default: false },
+  connected: { type: Boolean, default: false },
   gender: { type: String, required: true, enum: ['Male', 'Female', 'Other'] },
   sexualPreferences: { type: String, enum: ['Male', 'Female', 'Both', 'None'] },
   biography: { type: String },
@@ -19,6 +23,7 @@ const userSchema = new Schema({
   viewedBy: [{ type: Schema.Types.ObjectId, ref: 'User' }], // Array of user IDs who viewed the profile
   likedBy: [{ type: Schema.Types.ObjectId, ref: 'User' }], // Array of user IDs who liked the profile
 }, {
+  matcha: [{ type: Schema.Types.ObjectId, ref: 'User' }], // Array of user IDs who matched each other
   timestamps: true // Adds createdAt and updatedAt timestamps
 });
 
