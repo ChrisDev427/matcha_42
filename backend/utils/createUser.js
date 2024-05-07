@@ -2,36 +2,39 @@ const bcrypt = require('bcrypt');
 const User = require('../models/User');
 const saltRounds = 10;
 const bdd = require('./connectBdd');
+const sendEmail = require('./sendEmailVerification');
 
-function createUser(req){
-    let user;
-    bcrypt.hash(req.body.password, saltRounds, function(err, hash) {
-            user = new User({
+class DuplicationError extends Error {
+    constructor(message) {
+      super(message);
+      this.name = "DuplicationError";
+    }
+  }
+
+async function createUser(req) {
+    try {
+        const hash = await bcrypt.hash(req.body.password, saltRounds);
+        const userExist = await User.findOne({ email: req.body.email });
+        if (userExist) {
+            throw new DuplicationError('User already exists');
+        }
+        const user = new User({
             username: req.body.username,
             email: req.body.email,
             password: hash,
-            firstname: req.body.firstname,
-            lastname: req.body.lastname
+            firstName: req.body.firstname,
+            lastName: req.body.lastname,
+            verified: false
         });
-    })
-    .then(() => {
-        // verify uniques
-        userExist = bdd.find({$or: [{username: user.username}, {email: user.email}]})
-        if (userExist) {
-            throw new Error('User already exists');
-        }
-        // send mail verification
-        // user.verified = true;
-        user.save()
-        res.status(201).json({
-            message: 'User created successfully!'
-        });
-    })
-    .catch((error) => {
-        res.status(400).json({
-            error: error
-        });
-    });
+        await user.save();
+        await sendEmail(user.email, 'Verify Your Email', 'Please verify your email by clicking on this link: [link]');
+    } catch (error) {
+        console.log("Error in createUser", error);
+        if (error instanceof DuplicationError)
+            return;
+        else
+            await User.deleteOne({ email: req.body.email });
+    }
 }
 
 module.exports = createUser;

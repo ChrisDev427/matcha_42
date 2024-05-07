@@ -20,9 +20,27 @@ app.get('/', (req, res) => {
 
 // const user = require('./models/User');
 
+req = {
+	body: {
+		username: "nomutilisateur",
+		email: "Axe06@hotmail.fr",
+		password: "MotDePasse123",
+		firstname: "Jean",
+		lastname: "Dupont"
+	}
+};
+// console.log(req);
+const createUser = require('./utils/createUser');
+try {
+	createUser(req);
+}
+catch (error) {
+	console.log("Error in createUser:", error);
+}
+
 
 app.get('*', (req, res) => {
-  res.sendFile('../frontend/dist/index.html');
+//   res.sendFile('../frontend/dist/index.html');
 });
 
 

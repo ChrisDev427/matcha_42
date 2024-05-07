@@ -9,7 +9,7 @@ const userSchema = new Schema({
   email: { type: String, required: true, unique: true },
   verified: { type: Boolean, default: false },
   connected: { type: Boolean, default: false },
-  gender: { type: String, required: true, enum: ['Male', 'Female', 'Other'] },
+  gender: { type: String, enum: ['Male', 'Female', 'Other'] },
   sexualPreferences: { type: String, enum: ['Male', 'Female', 'Both', 'None'] },
   biography: { type: String },
   interests: [{ type: String }], // Tags like #vegan, #geek, etc.
