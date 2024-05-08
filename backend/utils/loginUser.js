@@ -2,7 +2,7 @@ const jwt = require('jsonwebtoken');
 const bcrypt = require('bcrypt');
 const User = require('./models/User'); // Assurez-vous que le chemin vers votre modèle d'utilisateur est correct
 
-const JWT_SECRET = process.env.JWT_SECRET || 'axelfernandez';
+const JWT_SECRET = process.env.JWT_SECRET;
 const JWT_EXPIRES_IN = '7d'; // Durée de validité du token
 
 async function loginUser(req, res) {

@@ -2,6 +2,8 @@ let express = require('express');
 let app = express();
 const verifyToken = require('./middlewares/jwt');
 
+require('dotenv').config();
+
 //template engine
 
 //static files

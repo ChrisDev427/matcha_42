@@ -7,7 +7,7 @@ let transporter = nodemailer.createTransport({
   secure: false, // true pour le port 465, false pour les autres ports
   auth: {
     user: 'transcendence-pong@outlook.com', // Votre adresse e-mail
-    pass: 'gzdqyrdxdmjbtdti' // Votre mot de passe
+    pass: process.env.EMAIL_PASSWORD // Votre mot de passe
   }
 });
 
