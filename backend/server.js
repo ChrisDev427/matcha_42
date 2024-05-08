@@ -1,6 +1,6 @@
 let express = require('express');
 let app = express();
-
+const verifyToken = require('./middlewares/jwt');
 
 //template engine
 
@@ -14,8 +14,9 @@ app.use(express.urlencoded({ extended: false }));
 app.use(express.json());
 
 //routes
-app.get('/', (req, res) => {
-})
+app.get('/', verifyToken, (req, res) => {
+	//   res.sendFile('../frontend/dist/index.html');
+});
 
 
 // const user = require('./models/User');
@@ -39,9 +40,7 @@ catch (error) {
 }
 
 
-app.get('*', (req, res) => {
-//   res.sendFile('../frontend/dist/index.html');
-});
+
 
 
 //start server
