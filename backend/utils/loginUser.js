@@ -1,14 +1,15 @@
 const jwt = require('jsonwebtoken');
 const bcrypt = require('bcrypt');
-const User = require('./models/User'); // Assurez-vous que le chemin vers votre modèle d'utilisateur est correct
+const User = require('../models/User');
+
 
 const JWT_SECRET = process.env.JWT_SECRET;
 const JWT_EXPIRES_IN = '7d'; // Durée de validité du token
 
 async function loginUser(req, res) {
     try {
+		const bdd = require('./connectBdd');
         const { username, password } = req.body;
-
         // Trouver l'utilisateur par son username
         const user = await User.findOne({ username });
         if (!user) {
@@ -43,3 +44,5 @@ async function loginUser(req, res) {
         res.status(500).json({ message: "Erreur du serveur lors de la tentative de connexion" });
     }
 }
+
+module.exports = loginUser;

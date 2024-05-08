@@ -1,18 +1,18 @@
 const bcrypt = require('bcrypt');
-const User = require('../models/User');
 const saltRounds = 10;
-const bdd = require('./connectBdd');
+const User = require('../models/User');
 const sendEmail = require('./sendEmailVerification');
 
 class DuplicationError extends Error {
     constructor(message) {
-      super(message);
-      this.name = "DuplicationError";
+        super(message);
+        this.name = "DuplicationError";
     }
-  }
+}
 
 async function createUser(req) {
     try {
+        const bdd = require('./connectBdd');
         const hash = await bcrypt.hash(req.body.password, saltRounds);
         const userExist = await User.findOne({ email: req.body.email });
         if (userExist) {
