@@ -30,7 +30,7 @@ export default {
 
 <style lang=scss>
 footer {
-  border-top: 3px solid #525252;
+  border-top: 3px solid var(--pink);
 }
 .footer {
   max-width: 2100px;
