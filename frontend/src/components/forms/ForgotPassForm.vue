@@ -14,18 +14,13 @@
 <script>
 import { useI18n } from "vue-i18n";
 import { ref, watch } from 'vue';
+import { validateEmail } from "../../libft/libft.js";
 
 export default {
     name: "ForgotPassForm",
 
     setup() {
-
-
-        function validateEmail(value) {
-
-            return (/^\w+([.-]?\w+)*@\w+([.-]?\w+)*(.\w{2,3})+$/.test(value));
-        }
-
+        
         // Traduction ----------------------------------
         const { t } = useI18n();
         const send = t("send");

@@ -22,6 +22,7 @@ import { useI18n } from "vue-i18n";
 import { ref, watch } from 'vue';
 
 export default {
+    
     name: "LoginForm",
 
     setup() {
@@ -34,7 +35,7 @@ export default {
         const password = t("password");
         const connect = t("connect");
 
-        // 
+        // inputs
         let inputs = ref({
 
             userName: '',

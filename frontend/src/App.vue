@@ -9,12 +9,36 @@
 <script>
 import Header from "./components/header/HeaderCmp.vue";
 import Footer from "./components/footer/FooterCmp.vue";
-
+import { useStore } from "vuex";
+import { computed } from "vue";
 export default {
   name: "App",
   components: {
     Header,
     Footer,
+  },
+  
+  setup() {
+    const store = useStore();
+    const connectionState = computed(() => store.getters.getConnectionState);
+    const accessToken = computed(() => store.getters.getAccessToken);
+    const refreshToken = computed(() => store.getters.getRefreshToken);
+
+    console.log('connectionState', connectionState.value);
+
+    store.commit('setConnectionState', true);
+    
+    console.log('connectionState', connectionState.value);
+
+    store.commit('setAccessToken', '12345678910');
+    store.commit('setRefreshToken', '109876543210')
+    
+    console.log('access token = ', accessToken.value);
+    console.log('refresh token = ', refreshToken.value);
+
+    
+
+    
   },
 };
 </script>
@@ -40,7 +64,6 @@ export default {
   background: url(../public/src/couple-bg.jpg) fixed center/cover;
 
   height: 100vh;
-
 }
 
 .fade-blur-bg {
@@ -82,6 +105,4 @@ export default {
 .text-green {
   color: rgb(64, 169, 64) !important;
 }
-
-
 </style>

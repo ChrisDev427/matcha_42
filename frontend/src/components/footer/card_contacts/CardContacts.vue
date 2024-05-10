@@ -12,7 +12,7 @@
 
 <script>
 import Contact from "./ContactCmp.vue";
-import { chris_infos, axel_infos } from "../../../../data/data.js";
+import { chris_infos, axel_infos } from "../../../data/data.js";
 import { useI18n } from "vue-i18n";
 
 export default {
