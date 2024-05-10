@@ -156,7 +156,7 @@ export default {
             border-radius: 8px;
             text-align: center;
             font-weight: 600;
-            // font-size: 1.2rem;  
+            // font-size: 1.2rem;
             background-color: var(--purple-placeholder-bg);
             color: var(--purple);
 
