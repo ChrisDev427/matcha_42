@@ -1,21 +1,24 @@
 <template>
   <div class="about--project">
-    <p v-html="$t('aboutProjectFooter')"></p>
+    <p v-html="replace_newLine_to_br_tags($t('aboutProjectFooter'))"></p>
   </div>
 </template>
 
 <script>
 import { useI18n } from "vue-i18n";
+import { replace_newLine_to_br_tags } from "@/libft/libft.js";
 
 export default {
   name: "AboutProject",
 
   setup() {
     const { t } = useI18n();
-    // Utilisation de la fonction de traduction
     const aboutProjectFooter = t("aboutProjectFooter");
 
-    return { aboutProjectFooter };
+    return {
+      aboutProjectFooter,
+      replace_newLine_to_br_tags,
+    };
   },
 };
 </script>

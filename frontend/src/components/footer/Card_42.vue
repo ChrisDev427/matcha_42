@@ -25,7 +25,7 @@
 </template>
 
 <script>
-import { ecole_infos } from "../../../data/data.js";
+import { ecole_infos } from "../../data/data.js";
 export default {
   name: "Card_42",
   data() {

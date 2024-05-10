@@ -2,7 +2,8 @@
     <div class="register--container ">
         <h3>{{ $t('registerTitle') }}</h3>
         <h3 id="sub--title">{{ $t('registerSubTitle') }}</h3>
-        <form action="" class="register--form">
+        <form action="/RegisterPage" method="post" class="register--form" @submit.prevent="submitForm">
+            
             <input v-model="inputs.userName" :maxlength="maxLength" type="text" :placeholder="$t('userName')">
             <input v-model="inputs.firstName" :maxlength="maxLength" type="text" :placeholder="$t('firstName')">
             <input v-model="inputs.lastName" :maxlength="maxLength" type="text" :placeholder="$t('lastName')">
@@ -15,7 +16,7 @@
                 :class="{ 'text-red': !inputs.samePassword, 'text-green': inputs.samePassword, 'disabled--input': !inputs.emailValid }"
                 type="password" :placeholder="$t('passwordConfirm')">
 
-            <button class="send--registration--btn"
+            <button @click="print" class="send--registration--btn" type="submit"
                 :class="{ 'disabled--btn': !inputs.samePassword || !inputs.emailValid || !inputs.userName || !inputs.firstName || !inputs.lastName }">{{
                     $t('send') }}</button>
         </form>
@@ -25,21 +26,27 @@
 <script>
 import { useI18n } from "vue-i18n";
 import { ref, watch } from 'vue';
+import { validateEmail } from "@/libft/libft.js";
 
 
 export default {
-
+    
     name: "RegisterForm",
 
+    
+    // data() {
+    //     console.log(this.$store.getters.getConnected);
+    //     this.$store.commit('isConnected');
+    //     console.log(this.$store.getters.getConnected);
+    //     return {
+    //         aff: this.$store.state.connected
+    //     }
+        
+    // },
+    
     setup() {
-
+        
         const maxLength = 15;
-
-
-        function validateEmail(value) {
-
-            return (/^\w+([.-]?\w+)*@\w+([.-]?\w+)*(.\w{2,3})+$/.test(value));
-        }
 
         // Traduction ----------------------------------
         const { t } = useI18n();
@@ -55,6 +62,9 @@ export default {
         // Input Object --------------------------------
         let inputs = ref({
 
+            userName: '',
+            firstName: '',
+            lastName: '',
             email: '',
             emailValid: false,
             password: '',
@@ -91,6 +101,24 @@ export default {
 
         }, { deep: true });
 
+        const print = () => {
+            console.log(
+
+                inputs.value.userName,
+                ' ',
+                inputs.value.firstName,
+                ' ',
+
+                inputs.value.lastName,
+                ' ',
+
+                inputs.value.email,
+                ' ',
+
+                inputs.value.password
+            )
+        }
+
 
         return {
             registerTitle,
@@ -104,6 +132,7 @@ export default {
             inputs,
             maxLength,
             validateEmail,
+            print,
         };
     },
 }
