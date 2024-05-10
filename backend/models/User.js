@@ -2,7 +2,7 @@ const mongoose = require('mongoose');
 const Schema = mongoose.Schema;
 
 const userSchema = new Schema({
-  username: { type: String, required: true },
+  username: { type: String, required: true, unique: true},
   password: { type: String, required: true },
   firstname: { type: String, required: true },
   lastname: { type: String, required: true },
@@ -25,6 +25,11 @@ const userSchema = new Schema({
   likedBy: [{ type: Schema.Types.ObjectId, ref: 'User' }], // Array of user IDs who liked the profile
 }, {
   matcha: [{ type: Schema.Types.ObjectId, ref: 'User' }], // Array of user IDs who matched each other
+  notifications: [{ // Array of notifications
+	title: { type: String, required: true },
+	body: { type: String, required: true },
+	date: { type: Date, default: Date.now },
+  }],
   timestamps: true, // Adds createdAt and updatedAt timestamps,
 });
 

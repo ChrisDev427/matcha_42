@@ -1,19 +1,28 @@
 let express = require('express');
+const http = require('http');
+const WebSocket = require('ws');
+
 let app = express();
+const server = http.createServer(app);
+
 const path = require('path');
-const verifyToken = require('./middlewares/jwt');
 const cookieParser = require('cookie-parser');
+const { setupWebSocket } = require('./utils/websockets');
 
 require('dotenv').config();
 
 //template engine
 
+
 //static files
-app.use(cookieParser());
 
 // //middleware
 app.use(express.urlencoded({ extended: false }));
 app.use(express.json());
+app.use(cookieParser());
+
+// Configurez les WebSockets
+const wss = setupWebSocket(server);
 
 //routes
 app.get('/', (req, res) => {
@@ -27,12 +36,14 @@ app.post('/login', require('./utils/loginUser'), (req, res) => {});
 
 app.post('/submit-form', require('./utils/createUser'), (req, res) => {});
 
-// app.get('/verify-email', require('./utils/verifyEmail'), (req, res) => {});
+app.get('/verifyEmail', require('./utils/verifyEmail'), (req, res) => {});
+
+app.get('/like', require('./utils/like'), (req, res) => {});
 
 app.use(express.static('../frontend/dist'));
 
 
 //start server
-app.listen(8080, () => {
+server.listen(8080, () => {
 	  console.log('Server is running on port 8080');
 });

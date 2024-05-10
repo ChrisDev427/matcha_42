@@ -12,10 +12,12 @@
       <span>{{ $t("accountCreate_btn") }}</span>
     </router-link>
   </div>
+
 </template>
 
 <script>
 import { useI18n } from "vue-i18n";
+import { onMounted, onUnmounted } from "vue";
 
 export default {
   name: "HomePage",
@@ -25,14 +27,47 @@ export default {
     // Utilisation de la fonction de traduction
     const accountCreate = t("accountCreate");
 
+    let ws;
+
+    // Initialisation de WebSocket
+    function initWebSocket() {
+      ws = new WebSocket('ws://localhost:8080/?id=663e2005f17c31d7d4ddde8e');
+
+      ws.onopen = function() {
+    console.log('Connection is open ...');
+    ws.send('Hello Server!');
+};
+
+ws.onmessage = function(messageEvent) {
+    console.log('Server says: ' + messageEvent.data);
+};
+
+ws.onclose = function() {
+    console.log('Connection is closed.');
+};
+
+    }
+
+    // Nettoyer et fermer la connexion WebSocket lors du démontage du composant
+    function cleanupWebSocket() {
+      if (ws) {
+        ws.close();
+      }
+    }
+
+    // Exécuter initWebSocket au montage et cleanupWebSocket au démontage
+    onMounted(initWebSocket);
+    onUnmounted(cleanupWebSocket);
+
     return { accountCreate };
   },
 };
 </script>
 
+
 <style lang="scss" scoped>
 .home {
-  
+
   display: grid;
   align-items: center;
   justify-content: center;
@@ -61,7 +96,7 @@ export default {
     @media (min-width: 200px) and (max-width: 700px) {
       margin-top: 100px;
 
-      
+
     }
   }
 

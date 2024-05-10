@@ -2,6 +2,10 @@ const bcrypt = require('bcrypt');
 const saltRounds = 10;
 const User = require('../models/User');
 const sendEmail = require('./sendEmailVerification');
+const twig = require('twig');
+const { UUID } = require('mongodb');
+const path = require('path');
+
 
 class DuplicationError extends Error {
     constructor(message) {
@@ -24,9 +28,10 @@ async function createUser(req, res) {
             password: hash,
             firstname: req.body.firstName,
             lastname: req.body.lastName,
+            refreshToken: new UUID().toString(),
         });
+        await sendEmail(user.email, user.refreshToken);
         await user.save();
-        await sendEmail(user.email, 'Verify Your Email', 'Please verify your email by clicking on this link: [link]');
         res.status(201).json({ message: "User created" });
     } catch (error) {
         console.log("Error in createUser", error);
