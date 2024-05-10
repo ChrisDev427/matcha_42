@@ -12,7 +12,6 @@ class DuplicationError extends Error {
 
 async function createUser(req, res) {
     try {
-        // console.log("req.body= ", req.body)
         require('./connectBdd');
         const hash = await bcrypt.hash(req.body.password, saltRounds);
         const userExist = await User.findOne({ email: req.body.email });
@@ -20,11 +19,11 @@ async function createUser(req, res) {
             throw new DuplicationError('User already exists');
         }
         const user = new User({
-            username: req.body.username,
+            username: req.body.userName,
             email: req.body.email,
             password: hash,
-            firstname: req.body.firstname,
-            lastname: req.body.lastname,
+            firstname: req.body.firstName,
+            lastname: req.body.lastName,
         });
         await user.save();
         await sendEmail(user.email, 'Verify Your Email', 'Please verify your email by clicking on this link: [link]');

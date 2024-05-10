@@ -16,16 +16,18 @@ app.use(express.urlencoded({ extended: false }));
 app.use(express.json());
 
 //routes
-app.get('/', verifyToken, (req, res) => {
+app.get('/', (req, res) => {
 	// res.send('Hello World');
-	res.sendStatus(200).send(res);
+	// res.sendStatus(200).send(res);
+	res.sendFile(path.join(__dirname, '../frontend/dist/index.html'));
 });
 
 
 app.post('/login', require('./utils/loginUser'), (req, res) => {});
 
-app.post('/RegisterPage', require('./utils/createUser'), (req, res) => {console.log("req= ", req.body);});
+app.post('/submit-form', require('./utils/createUser'), (req, res) => {});
 
+// app.get('/verify-email', require('./utils/verifyEmail'), (req, res) => {});
 
 app.use(express.static('../frontend/dist'));
 
