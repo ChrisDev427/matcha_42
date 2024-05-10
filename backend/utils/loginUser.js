@@ -2,37 +2,54 @@ const jwt = require('jsonwebtoken');
 const bcrypt = require('bcrypt');
 const User = require('../models/User');
 
-
 const JWT_SECRET = process.env.JWT_SECRET;
-const JWT_EXPIRES_IN = '7d'; // Durée de validité du token
+const JWT_EXPIRES_IN = '15m'; // Durée de validité du access token réduite
+const REFRESH_TOKEN_SECRET = process.env.REFRESH_TOKEN_SECRET;
+const REFRESH_TOKEN_EXPIRES_IN = '7d'; // Durée de validité du refresh token
 
 async function loginUser(req, res) {
     try {
-		const bdd = require('./connectBdd');
+		require('./connectBdd');
         const { username, password } = req.body;
-        // Trouver l'utilisateur par son username
         const user = await User.findOne({ username });
         if (!user) {
-            return res.status(404).json({ message: "Utilisateur non trouvé" });
+            return res.status(404).json({ message: "User not found" });
         }
 
-        // Vérifier le mot de passe
         const isMatch = await bcrypt.compare(password, user.password);
         if (!isMatch) {
-            return res.status(401).json({ message: "Mot de passe incorrect" });
+            return res.status(401).json({ message: "Wrong Password" });
         }
 
-        // Création du JWT
-        const token = jwt.sign(
+		if (!user.verified) {
+			return res.status(401).json({ message: "Email not verified" });
+		}
+
+        // Création du access token
+        const accessToken = jwt.sign(
             { userId: user._id, email: user.email },
             JWT_SECRET,
             { expiresIn: JWT_EXPIRES_IN }
         );
 
-        // Retourner le JWT au client
+        // Création du refresh token
+        const refreshToken = jwt.sign(
+            { userId: user._id },
+            REFRESH_TOKEN_SECRET,
+            { expiresIn: REFRESH_TOKEN_EXPIRES_IN }
+        );
+
+        // Stocker le refresh token dans la base de données ou une cache
+		user.refreshToken = refreshToken;
+		user.connected = true;
+		await user.save();
+        // par exemple Redis, avec gestion de l'expiration
+
+        // Envoyer les tokens au client
+        res.cookie('refreshToken', refreshToken, { httpOnly: true, secure: true, maxAge: 7 * 24 * 60 * 60 * 1000 }); // 7 jours en millisecondes
         res.json({
             message: "Connexion réussie",
-            token,
+            accessToken,
             user: {
                 id: user._id,
                 username: user.username,

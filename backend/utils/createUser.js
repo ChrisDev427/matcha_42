@@ -10,9 +10,10 @@ class DuplicationError extends Error {
     }
 }
 
-async function createUser(req) {
+async function createUser(req, res) {
     try {
-        const bdd = require('./connectBdd');
+        // console.log("req.body= ", req.body)
+        require('./connectBdd');
         const hash = await bcrypt.hash(req.body.password, saltRounds);
         const userExist = await User.findOne({ email: req.body.email });
         if (userExist) {
@@ -22,18 +23,24 @@ async function createUser(req) {
             username: req.body.username,
             email: req.body.email,
             password: hash,
-            firstName: req.body.firstname,
-            lastName: req.body.lastname,
-            verified: false
+            firstname: req.body.firstname,
+            lastname: req.body.lastname,
         });
         await user.save();
         await sendEmail(user.email, 'Verify Your Email', 'Please verify your email by clicking on this link: [link]');
+        res.status(201).json({ message: "User created" });
     } catch (error) {
         console.log("Error in createUser", error);
         if (error instanceof DuplicationError)
+        {
+            res.status(409).json({ message: error.message });
             return;
+        }
         else
+        {
+            res.status(503).json({ message:  error.message });
             await User.deleteOne({ email: req.body.email });
+        }
     }
 }
 
