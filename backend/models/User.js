@@ -14,9 +14,10 @@ const userSchema = new Schema({
   gender: { type: String, enum: ['Male', 'Female', 'Other', 'None'], default: 'None' },
   sexualPreferences: { type: String, enum: ['Male', 'Female', 'Both', 'None'], default: 'None' },
   biography: { type: String, default: 'bio here' },
+  age: { type: Number, default: null },
   interests: [{ type: String }], // Tags like #vegan, #geek, etc.
   photos: [{ type: String}],//, validate: [arrayLimit, 'Cannot exceed 5 photos'] }],
-  profilePicture: { type: String, default: 'default.jpg' },
+  profilePicture: { type: Number, default: 1},
   fameRating: { type: Number, default: 0 }, // Fame rating can be calculated based on various criteria
   location: {
 	type: { type: String, default: 'Point' }, // GeoJSON type

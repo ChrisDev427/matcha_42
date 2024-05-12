@@ -8,6 +8,9 @@ const server = http.createServer(app);
 const path = require('path');
 const cookieParser = require('cookie-parser');
 const { setupWebSocket } = require('./utils/websockets');
+const verifyToken = require('./middlewares/jwt');
+
+const photosHandler = require('./utils/photosHandler');
 
 require('dotenv').config();
 
@@ -38,7 +41,7 @@ app.post('/submit-form', require('./utils/createUser'), (req, res) => {});
 
 app.get('/verifyEmail', require('./utils/verifyEmail'), (req, res) => {});
 
-// app.post('/updateUser', require('./utils/updateUser'), (req, res) => {});
+app.post('/updateUser', verifyToken, require('./utils/updateUser'), (req, res) => {});
 
 
 app.use(express.static('../frontend/dist'));
