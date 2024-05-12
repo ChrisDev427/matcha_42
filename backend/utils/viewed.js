@@ -1,14 +1,24 @@
 const connectBdd = require('./connectBdd');
 
-async function likeUser(userId, message) {
-	connectBdd();
-	const User = require('../models/User');
+async function viewedUser(userId, message) {
 	const { clients } = require('./websockets');
 	let ws = clients.get(userId);
 	if (!ws) {
 		return;
 	}
+	else if (!message.user || !message.userviewed || message.user === message.userviewed) {
+		ws.send(JSON.stringify({
+			type: 'error',
+			userId: userId,
+			message: {
+				title: 'errors in data sent',
+			}
+		}));
+		return;
+	}
 
+	const User = require('../models/User');
+	connectBdd();
 	user = await User.findOne({ username: message.user });
 	if (!user) {
 		ws.send(JSON.stringify({
@@ -27,6 +37,16 @@ async function likeUser(userId, message) {
 			userId: userId,
 			message: {
 				title: 'userviewed not found',
+			}
+		}));
+		return;
+	}
+	else if (userviewed.viewedBy.includes(user._id)) {
+		ws.send(JSON.stringify({
+			type: 'error',
+			userId: userId,
+			message: {
+				title: 'already viewed',
 			}
 		}));
 		return;
@@ -58,4 +78,4 @@ async function likeUser(userId, message) {
 	}));
 }
 
-module.exports = likeUser;
+module.exports = viewedUser;
