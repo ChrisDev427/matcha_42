@@ -38,7 +38,8 @@ app.post('/submit-form', require('./utils/createUser'), (req, res) => {});
 
 app.get('/verifyEmail', require('./utils/verifyEmail'), (req, res) => {});
 
-app.get('/like', require('./utils/like'), (req, res) => {});
+// app.post('/updateUser', require('./utils/updateUser'), (req, res) => {});
+
 
 app.use(express.static('../frontend/dist'));
 

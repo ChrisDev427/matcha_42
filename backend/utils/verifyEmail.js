@@ -1,5 +1,7 @@
+const connectBdd = require('./connectBdd');
+
 async function verifyEmail(req, res){
-	require('./connectBdd');
+	await connectBdd();
 	const User = require('../models/User');
 	const tokenEmail = req.query.token;
 	if (!tokenEmail) {

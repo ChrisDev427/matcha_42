@@ -10,6 +10,7 @@ const userSchema = new Schema({
   verified: { type: Boolean, default: false },
   refreshToken: { type: String , default: 'None'},
   connected: { type: Boolean, default: false },
+  lastConnection: { type: Date, default: null },
   gender: { type: String, enum: ['Male', 'Female', 'Other', 'None'], default: 'None' },
   sexualPreferences: { type: String, enum: ['Male', 'Female', 'Both', 'None'], default: 'None' },
   biography: { type: String, default: 'bio here' },
@@ -23,13 +24,14 @@ const userSchema = new Schema({
   },
   viewedBy: [{ type: Schema.Types.ObjectId, ref: 'User' }], // Array of user IDs who viewed the profile
   likedBy: [{ type: Schema.Types.ObjectId, ref: 'User' }], // Array of user IDs who liked the profile
-}, {
   matcha: [{ type: Schema.Types.ObjectId, ref: 'User' }], // Array of user IDs who matched each other
   notifications: [{ // Array of notifications
 	title: { type: String, required: true },
 	body: { type: String, required: true },
-	date: { type: Date, default: Date.now },
+	viewed : { type: Boolean, default: false },
+	date: { type: Date, default: Date.now }
   }],
+}, {
   timestamps: true, // Adds createdAt and updatedAt timestamps,
 });
 

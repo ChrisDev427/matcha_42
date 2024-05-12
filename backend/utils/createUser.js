@@ -5,6 +5,7 @@ const sendEmail = require('./sendEmailVerification');
 const twig = require('twig');
 const { UUID } = require('mongodb');
 const path = require('path');
+const connectBdd = require('./connectBdd');
 
 
 class DuplicationError extends Error {
@@ -16,7 +17,7 @@ class DuplicationError extends Error {
 
 async function createUser(req, res) {
     try {
-        require('./connectBdd');
+        await connectBdd();
         const hash = await bcrypt.hash(req.body.password, saltRounds);
         const userExist = await User.findOne({ email: req.body.email });
         if (userExist) {

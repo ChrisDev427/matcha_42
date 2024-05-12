@@ -4,6 +4,7 @@
       <h1>swipe right,</h1>
       <h1>match,</h1>
       <h1 id="date">date !</h1>
+      <button class="button-test" @click="submitTest">submit</button>
     </div>
     <router-link
       class="create--account--btn"
@@ -31,11 +32,12 @@ export default {
 
     // Initialisation de WebSocket
     function initWebSocket() {
-      ws = new WebSocket('ws://localhost:8080/?id=663e2005f17c31d7d4ddde8e');
+      ws = new WebSocket('ws://localhost:8080/?id=66406489327b4f1c5543f281');
 
       ws.onopen = function() {
     console.log('Connection is open ...');
-    ws.send('Hello Server!');
+    let message = JSON.stringify({type: 'test', userId:'' , message: 'Hello Server!'});
+    ws.send(message);
 };
 
 ws.onmessage = function(messageEvent) {
@@ -55,11 +57,16 @@ ws.onclose = function() {
       }
     }
 
+    function submitTest() {
+      let message = JSON.stringify({type: 'like', userId:'66406489327b4f1c5543f281' , message: {user: 'Axesnake', userLiked: 'Axou'}});
+      ws.send(message);
+    }
+
     // Exécuter initWebSocket au montage et cleanupWebSocket au démontage
     onMounted(initWebSocket);
     onUnmounted(cleanupWebSocket);
 
-    return { accountCreate };
+    return { accountCreate, submitTest};
   },
 };
 </script>
