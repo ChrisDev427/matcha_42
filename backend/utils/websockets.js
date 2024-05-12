@@ -2,6 +2,7 @@ const WebSocket = require('ws');
 const url = require('url');
 const User = require('../models/User');
 const likeUser = require('./like');
+const viewedUser = require('./viewed');
 const connectBdd = require('./connectBdd');
 
 let clients = new Map();
