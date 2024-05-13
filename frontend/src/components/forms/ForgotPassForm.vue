@@ -95,7 +95,7 @@ export default {
     .forgot--pass--form {
         display: grid;
         justify-items: center;
-        width: 80%;
+        // width: 80%;
 
         input {
             padding: 6px;

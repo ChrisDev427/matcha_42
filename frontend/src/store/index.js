@@ -3,14 +3,23 @@ import { createStore } from 'vuex';
 export const store = createStore ({
     
     state: {
-        connection_state: false,
         access_token: '',
         refresh_token: '',
+
+        user_name: 'Chris',
+
+        is_connected: false,
+
+        login_form_sent: false,
+        register_form_sent: false,
+
+        server_response: null,
+        server_message: '',
     },
 
     getters: {
-        getConnectionState(state) {
-            return state.connection_state;
+        getLoginFormSent(state) {
+            return state.login_form_sent;
         },
         getAccessToken(state) {
             return state.access_token;
@@ -18,11 +27,28 @@ export const store = createStore ({
         getRefreshToken(store) {
             return store.refresh_token;
         },
+
+        getRegisterFormSent(state) {
+            return state.register_form_sent;
+        },
+        getServerResponseValue(store) {
+            return store.server_response;
+        },
+        getServerMessage(store) {
+            return store.server_message;
+        },
+
+        getIsConnected(state) {
+            return state.is_connected;
+        },
+        getUserName(store) {
+            return store.user_name;
+        },
     },
 
     mutations: {
-        setConnectionState(state, value) {
-            state.connection_state = value;
+        setLoginFormSent(state, value) {
+            state.login_form_sent = value;
         },
     
         setAccessToken(state, value) {
@@ -30,7 +56,26 @@ export const store = createStore ({
         },
         setRefreshToken(state, value) {
             state.refresh_token = value;
-        }
+        },
+
+        setRegisterFormSent(state, value) {
+            state.register_form_sent = value;
+        },
+        setServerResponseValue(state, value) {
+            state.server_response = value;
+        },
+
+        setServerMessage(state, value) {
+            state.server_message = value;
+        },
+
+        setIsConnected(state, value) {
+            state.is_connected = value;
+        },
+        setUserName(state, value) {
+            state.user_name = value;
+        },
+        
 
 
     },

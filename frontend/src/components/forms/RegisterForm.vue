@@ -1,76 +1,82 @@
 <template>
-  <div class="register--container">
-    <h3>{{ $t("registerTitle") }}</h3>
-    <h3 id="sub--title">{{ $t("registerSubTitle") }}</h3>
-    <form
-      class="register--form"
-      @submit.prevent="submitForm"
-    >
-      <input
-        v-model="inputs.userName"
-        :maxlength="maxLength"
-        type="text"
-        :placeholder="$t('userName')"
-      />
-      <input
-        v-model="inputs.firstName"
-        :maxlength="maxLength"
-        type="text"
-        :placeholder="$t('firstName')"
-      />
-      <input
-        v-model="inputs.lastName"
-        :maxlength="maxLength"
-        type="text"
-        :placeholder="$t('lastName')"
-      />
-      <input
-        v-model="inputs.email"
-        type="email"
-        placeholder="e-mail"
-        :class="{
-          'text-red': !validateEmail(inputs.email),
-          'text-green': validateEmail(inputs.email),
-        }"
-      />
-      <input
-        v-model="inputs.password"
-        :disabled="!inputs.emailValid"
-        :class="{
-          'text-green': inputs.samePassword,
-          'disabled--input': !inputs.emailValid,
-        }"
-        type="password"
-        :placeholder="$t('password')"
-      />
-      <input
-        v-model="inputs.repeatPassword"
-        :disabled="!inputs.emailValid"
-        :class="{
-          'text-red': !inputs.samePassword,
-          'text-green': inputs.samePassword,
-          'disabled--input': !inputs.emailValid,
-        }"
-        type="password"
-        :placeholder="$t('passwordConfirm')"
-      />
+  <div>
 
-      <button
-        @click="print"
-        class="send--registration--btn"
-        type="submit"
-        :class="{
-          'disabled--btn':
-            !inputs.samePassword ||
-            !inputs.emailValid ||
-            !inputs.userName ||
-            !inputs.firstName ||
-            !inputs.lastName,
-        }"
-      >
-        {{ $t("send") }}
-      </button>
-    </form>
+    <div class="register--container" v-if="!$store.getters.getRegisterFormSent">
+      <h3>{{ $t("registerTitle") }}</h3>
+      <h3 id="sub--title">{{ $t("registerSubTitle") }}</h3>
+      <form class="register--form" @submit.prevent="submitForm">
+        <input
+          v-model="inputs.userName"
+          :maxlength="maxLength"
+          type="text"
+          :placeholder="$t('userName')"
+        />
+        <input
+          v-model="inputs.firstName"
+          :maxlength="maxLength"
+          type="text"
+          :placeholder="$t('firstName')"
+        />
+        <input
+          v-model="inputs.lastName"
+          :maxlength="maxLength"
+          type="text"
+          :placeholder="$t('lastName')"
+        />
+        <input
+          v-model="inputs.email"
+          type="email"
+          placeholder="e-mail"
+          :class="{
+            'text-red': !validateEmail(inputs.email),
+            'text-green': validateEmail(inputs.email),
+          }"
+        />
+        <input
+          v-model="inputs.password"
+          :disabled="!inputs.emailValid"
+          :class="{
+            'text-green': inputs.samePassword,
+            'disabled--input': !inputs.emailValid,
+          }"
+          type="password"
+          :placeholder="$t('password')"
+        />
+        <input
+          v-model="inputs.repeatPassword"
+          :disabled="!inputs.emailValid"
+          :class="{
+            'text-red': !inputs.samePassword,
+            'text-green': inputs.samePassword,
+            'disabled--input': !inputs.emailValid,
+          }"
+          type="password"
+          :placeholder="$t('passwordConfirm')"
+        />
+
+        <button
+          @click="submitRegisterForm()"
+          class="send--registration--btn"
+          type="submit"
+          :class="{
+            'disabled--btn':
+              !inputs.samePassword ||
+              !inputs.emailValid ||
+              !inputs.userName ||
+              !inputs.firstName ||
+              !inputs.lastName,
+          }"
+        >
+          {{ $t("send") }}
+        </button>
+      </form>
+    </div>
+  
+    <RegisterSuccess v-if="$store.getters.getServerResponseValue === 201" />
+    <RegisterErrorUserName v-if="$store.getters.getServerResponseValue === 409 && $store.getters.getServerMessage === 'Username already exists'" />
+    <RegisterErrorEmail v-if="$store.getters.getServerResponseValue === 409 && $store.getters.getServerMessage === 'Email already exists' "/>
+    <RegisterErrorServer v-if="$store.getters.getServerResponseValue === 503" />
+   
   </div>
 </template>
 
@@ -78,33 +84,48 @@
 import { useI18n } from "vue-i18n";
 import { ref, watch } from "vue";
 import { validateEmail } from "@/libft/libft.js";
+import { useStore } from "vuex";
+// import { computed } from "vue";
+// import { mapGetters } from 'vuex';
+import RegisterSuccess from "@/components/forms/RegisterSuccess.vue";
+import RegisterErrorServer from "@/components/forms/RegisterErrorServer.vue";
+import RegisterErrorUserName from "@/components/forms/RegisterErrorUserName.vue";
+import RegisterErrorEmail from "@/components/forms/RegisterErrorEmail.vue";
 
 export default {
   name: "RegisterForm",
+  components: {
+    RegisterSuccess,
+    RegisterErrorServer,
+    RegisterErrorUserName,
+    RegisterErrorEmail,
+  },
 
-  // data() {
-  //     console.log(this.$store.getters.getConnected);
-  //     this.$store.commit('isConnected');
-  //     console.log(this.$store.getters.getConnected);
-  //     return {
-  //         aff: this.$store.state.connected
-  //     }
 
-  // },
 
   setup() {
+    const store = useStore();
+    // store.commit('setRegisterFormSent', true);
+    // store.commit('setServerResponseValue', 503);
+    // store.commit('setServerMessage', 'Username already exists');
+    
+    
     const maxLength = 15;
+   
 
     // Traduction ----------------------------------
     const { t } = useI18n();
-    const registerTitle = t("registerTitle");
-    const registerSubTitle = t("registerSubTitle");
-    const userName = t("userName");
-    const firstName = t("firstName");
-    const lastName = t("lastName");
-    const password = t("password");
-    const passwordConfirm = t("passwordConfirm");
-    const send = t("send");
+
+    const i18 = {
+      registerTitle: t("registerTitle"),
+      registerSubTitle: t("registerSubTitle"),
+      userName: t("userName"),
+      firstName: t("firstName"),
+      lastName: t("lastName"),
+      password: t("password"),
+      passwordConfirm: t("passwordConfirm"),
+      send: t("send"),
+    };
 
     // Input Object --------------------------------
     let inputs = ref({
@@ -141,37 +162,37 @@ export default {
       },
       { deep: true }
     );
-
-    const print = () => {
-      console.log(
-        inputs.value.userName,
-        " ",
-        inputs.value.firstName,
-        " ",
-
-        inputs.value.lastName,
-        " ",
-
-        inputs.value.email,
-        " ",
-
-        inputs.value.password
-      );
-    };
+   
+   
+    async function submitRegisterForm() {
+      try {
+        // Envoyer les données du formulaire au backend Node.js
+        const response = await fetch("/register-form", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify(this.inputs),
+        });
+        store.commit('setRegisterFormSent', true);
+        store.commit('setServerResponseValue', response.status);
+        store.commit('setServerMessage', response.massage);
+       
+        console.log(response.status);
+        console.log(response.message);
+        // Gérer la réponse du backend si nécessaire
+      } catch (error) {
+        console.error("Error submitting form:", error);
+      }
+    }
 
     return {
-      registerTitle,
-      registerSubTitle,
-      userName,
-      firstName,
-      lastName,
-      password,
-      passwordConfirm,
-      send,
+      i18,
       inputs,
       maxLength,
       validateEmail,
-      print,
+      submitRegisterForm,
+     
     };
   },
 };
@@ -183,6 +204,7 @@ export default {
 
   // border: solid 1px red;
   width: auto;
+  //   max-width: 700px;
   height: auto;
   padding: 10px 35px 45px 35px;
   border-radius: 15px;

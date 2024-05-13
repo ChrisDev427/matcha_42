@@ -9,7 +9,7 @@
     <div class="buttons--container">
       <div class="buttons">
         <LangSelectBtn></LangSelectBtn>
-        <template v-if="connectionState">
+        <template v-if="$store.getters.getIsConnected">
           <ProfileBtn></ProfileBtn>
         </template>
         <ConnectBtn></ConnectBtn>
@@ -23,7 +23,7 @@ import TitleCmp from "./TitleCmp.vue";
 import LangSelectBtn from "./LangSelectBtn.vue";
 import ConnectBtn from "./ConnectBtn.vue";
 import ProfileBtn from "./ProfileBtn.vue";
-import { useStore } from "vuex";
+// import { useStore } from "vuex";
 
 // import { mapGetters } from "vuex";
 
@@ -36,10 +36,10 @@ export default {
     ProfileBtn,
   },
   data() {
-    const store = useStore();
+    // const store = useStore();
     return {
       headerOpacity: 1,
-      connectionState: store.getters.getConnectionState,
+    //   connectionState: store.getters.getConnectionState,
     };
   },
   //   setup() {
@@ -89,7 +89,7 @@ export default {
   .buttons--container {
     display: flex;
     align-items: top;
-    margin-top: 10px;
+    margin-top: 15px;
 
     .buttons {
       display: flex;

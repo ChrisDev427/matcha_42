@@ -11,7 +11,10 @@ import Header from "./components/header/HeaderCmp.vue";
 import Footer from "./components/footer/FooterCmp.vue";
 import { useStore } from "vuex";
 import { computed } from "vue";
+
+
 export default {
+
   name: "App",
   components: {
     Header,
@@ -20,15 +23,15 @@ export default {
   
   setup() {
     const store = useStore();
-    const connectionState = computed(() => store.getters.getConnectionState);
+    const isConnected = computed(() => store.getters.getIsConnected);
     const accessToken = computed(() => store.getters.getAccessToken);
     const refreshToken = computed(() => store.getters.getRefreshToken);
 
-    console.log('connectionState', connectionState.value);
+    console.log('connectionState', isConnected.value);
 
-    store.commit('setConnectionState', true);
+    // store.commit('setLoginState', true);
     
-    console.log('connectionState', connectionState.value);
+    console.log('connectionState', isConnected.value);
 
     store.commit('setAccessToken', '12345678910');
     store.commit('setRefreshToken', '109876543210')

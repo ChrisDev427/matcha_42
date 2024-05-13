@@ -1,38 +1,60 @@
 <template>
-  <div class="home">
-    <div class="main--title fade-In" @onclick="fadeOutTitle">
-      <h1>swipe right,</h1>
-      <h1>match,</h1>
-      <h1 id="date">date !</h1>
-    </div>
-    <router-link
-      class="create--account--btn"
-      :to="{ name: 'RegisterPage', params: {} }"
-    >
-      <span>{{ $t("accountCreate_btn") }}</span>
-    </router-link>
-  </div>
+  <section>
+    <template v-if="!connectionState">
+      <div class="home">
+        <div class="main--title fade-In" @onclick="fadeOutTitle">
+          <h1>swipe right,</h1>
+          <h1>match,</h1>
+          <h1 id="date">date !</h1>
+        </div>
+        <router-link
+          class="create--account--btn"
+          :to="{ name: 'RegisterPage', params: {} }"
+        >
+          <span>{{ $t("accountCreate_btn") }}</span>
+        </router-link>
+      </div>
+    </template>
+    <template v-if="connectionState">
+      <MainPage />
+    </template>
+  </section>
 </template>
 
 <script>
 import { useI18n } from "vue-i18n";
+import { useStore } from "vuex";
+import { computed } from "vue";
+import MainPage from "@/pages/MainPage.vue"
+
 
 export default {
   name: "HomePage",
 
+  components: {
+    MainPage,
+  },
+
+  data() {
+    const store = useStore();
+
+    return {
+      connectionState: computed(() => store.getters.getConnectionState),
+    };
+  },
+
   setup() {
     const { t } = useI18n();
     // Utilisation de la fonction de traduction
-    const accountCreate = t("accountCreate");
+    const accountCreate_btn = t("accountCreate_btn");
 
-    return { accountCreate };
+    return { accountCreate_btn };
   },
 };
 </script>
 
 <style lang="scss" scoped>
 .home {
-  
   display: grid;
   align-items: center;
   justify-content: center;
@@ -60,8 +82,6 @@ export default {
     }
     @media (min-width: 200px) and (max-width: 700px) {
       margin-top: 100px;
-
-      
     }
   }
 
@@ -85,14 +105,18 @@ export default {
 
       font-size: 1.2rem;
       font-weight: 500;
-      transition: all 0.4s;
+      transition: all 0.3s;
+      opacity: 1;
       cursor: pointer;
 
       &:hover {
-        background-image: linear-gradient(to right, #ff24a78a, #8890fe90);
+        // background-image: linear-gradient(to right, #ff24a78a, #8890fe90);
         /* Dégradé de couleur */
-        color: rgb(107, 12, 138);
+        opacity: 0.8;
         transform: scale(1.15);
+        // color: black;
+				color: var(--light-pink);
+
       }
     }
   }
