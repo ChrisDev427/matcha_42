@@ -6,6 +6,8 @@
       <h1 id="date">date !</h1>
       <button class="button-test" @click="submitTest">submit</button>
     </div>
+    <input type="file" id="fileInput" multiple @change="handleFileUpload" />
+    <button @click="submitPhotos">Upload Photos</button>
     <router-link
       class="create--account--btn"
       :to="{ name: 'RegisterPage', params: {} }"
@@ -18,7 +20,7 @@
 
 <script>
 import { useI18n } from "vue-i18n";
-import { onMounted, onUnmounted } from "vue";
+import { onMounted, onUnmounted, ref } from "vue";
 
 export default {
   name: "HomePage",
@@ -27,7 +29,7 @@ export default {
     const { t } = useI18n();
     // Utilisation de la fonction de traduction
     const accountCreate = t("accountCreate");
-
+    const selectedFiles = ref(null);
     let ws;
 
     // Initialisation de WebSocket
@@ -62,11 +64,47 @@ ws.onclose = function() {
       ws.send(message);
     }
 
-    // Exécuter initWebSocket au montage et cleanupWebSocket au démontage
+    function handleFileUpload(event) {
+      selectedFiles.value = event.target.files;
+    }
+
+    async function submitPhotos() {
+  console.log("selectedFiles = ", selectedFiles.value);
+  if (!selectedFiles.value) {
+    alert("Please select files first.");
+    return;
+  }
+
+  const formData = new FormData();
+  for (let file of selectedFiles.value) {
+    formData.append('photos', file);
+  }
+
+  // Vérification de ce qui est ajouté à formData
+  formData.forEach((value, key) => {
+    console.log(`${key}: ${value.name}`); // Assumant que 'value' est un fichier
+  });
+
+  try {
+    const response = await fetch('/updateUser', {
+      method: 'POST',
+      body: formData,
+      // En-tête Content-Type doit être omis pour permettre au navigateur de le définir
+      headers: {
+        'Authorization': 'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiI2NjQxYmUwYmMyNjczNjYwN2NhZDg4NTciLCJlbWFpbCI6ImF4ZXNuYWtlQGhvdG1haWwuZnIiLCJpYXQiOjE3MTU1OTY4MTgsImV4cCI6MTcxNTU5NzcxOH0.F-yk4q2UVD5kiyu45t6GGnYHI4ooU4xcm7juW521LB0',
+      },
+    });
+    const result = await response.json();
+    console.log(result);
+  } catch (error) {
+    console.error('Error uploading files:', error);
+  }
+}
+
     onMounted(initWebSocket);
     onUnmounted(cleanupWebSocket);
 
-    return { accountCreate, submitTest};
+    return { accountCreate, submitTest, handleFileUpload, submitPhotos };
   },
 };
 </script>

@@ -19,9 +19,13 @@ async function createUser(req, res) {
     try {
         await connectBdd();
         const hash = await bcrypt.hash(req.body.password, saltRounds);
-        const userExist = await User.findOne({ email: req.body.email });
-        if (userExist) {
-            throw new DuplicationError('User already exists');
+        const emailExist = await User.findOne({ email: req.body.email });
+        if (emailExist) {
+            throw new DuplicationError('Email already exists');
+        }
+        const usernameExist = await User.findOne({ username: req.body.userName });
+        if (usernameExist) {
+            throw new DuplicationError('Username already exists');
         }
         const user = new User({
             username: req.body.userName,

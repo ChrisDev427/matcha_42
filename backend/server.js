@@ -1,6 +1,7 @@
 let express = require('express');
 const http = require('http');
 const WebSocket = require('ws');
+const multer = require('multer');
 
 let app = express();
 const server = http.createServer(app);
@@ -11,6 +12,7 @@ const { setupWebSocket } = require('./utils/websockets');
 const verifyToken = require('./middlewares/jwt');
 
 const photosHandler = require('./utils/photosHandler');
+const upload = multer({ dest: 'photos/tmp' });
 
 require('dotenv').config();
 
@@ -41,8 +43,9 @@ app.post('/submit-form', require('./utils/createUser'), (req, res) => {});
 
 app.get('/verifyEmail', require('./utils/verifyEmail'), (req, res) => {});
 
-app.post('/updateUser', verifyToken, require('./utils/updateUser'), (req, res) => {});
+app.post('/updateUser', verifyToken, upload.array('photos'), require('./utils/updateUser'), (req, res) => {});
 
+app.get('/:username', verifyToken, require('./utils/getUser'), (req, res) => {});
 
 app.use(express.static('../frontend/dist'));
 

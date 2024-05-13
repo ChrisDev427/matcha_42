@@ -54,4 +54,4 @@ function imageToBase64(path) {
 
 
 
-module.exports = resizeImage, compressImageToUnder1MB, imageToBase64;
+module.exports = { resizeImage, compressImageToUnder1MB, imageToBase64 };

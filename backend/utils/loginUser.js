@@ -11,8 +11,8 @@ const REFRESH_TOKEN_EXPIRES_IN = '7d';
 async function loginUser(req, res) {
     try {
 		await connectBdd();
-        const { username, password } = req.body;
-        const user = await User.findOne({ username });
+        const { userName, password } = req.body;
+        const user = await User.findOne({ userName });
         if (!user) {
             return res.status(404).json({ message: "User not found" });
         }

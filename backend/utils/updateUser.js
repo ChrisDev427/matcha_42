@@ -2,13 +2,19 @@ const User = require('../models/User');
 const connectBdd = require('./connectBdd');
 const bcrypt = require('bcrypt');
 const saltRounds = 10;
+const path = require('path');
 
 let interests = [];
 
 async function updateUser(req, res){
+	// console.log("req.files = ", req.files);
+	// if (!req.body || Object.keys(req.body).length === 0)
+	// {
+	// 	return res.status(400).json({ message: "No data" });
+	// }
 	try {
 		await connectBdd();
-		const user = await User.findOne({username: req.user});
+		const user = await User.findOne({_id: req.user.userId});
 		if (!user) {
 			return res.status(404).json({ message: "User not found" });
 		}
@@ -49,6 +55,10 @@ async function updateUser(req, res){
 		{
 			for (let i = 0; i < req.body.interests.length; i++)
 			{
+				if (!req.body.interests[i].startsWith("#"))
+				{
+					return res.status(400).json({ message: "Interest must start with #" });
+				}
 				if (!user.interests.includes(req.body.interests[i]))
 				{
 					user.interests.push(req.body.interests[i]);
@@ -59,24 +69,26 @@ async function updateUser(req, res){
 				}
 			}
 		}
-		if (req.body.photos)
+		if (req.files)
 		{
 			const nbPhotosInDB = user.photos.length;
-			if (req.body.photos.length + nbPhotosInDB > 5)
+			if (req.files.length + nbPhotosInDB > 5)
 			{
 				return res.status(400).json({ message: "You can't have more than 5 photos" });
 			}
 			const fs = require('fs');
-			const { resizeImage } = require('./photosHandler');
-			const { compresscompressImageToUnder1MB } = require('./photosHandler');
-			const { imageToBase64 } = require('./photosHandler');
-			for (let i = 0; i < req.body.photos.length; i++)
+			const { resizeImage, compressImageToUnder1MB, imageToBase64 } = require('./photosHandler');
+			for (let i = 0; i < req.files.length; i++)
 			{
-				await resizeImage(req.body.photos[i], req.body.photos[i] + "_resized", 500, 500);
-				await compresscompressImageToUnder1MB(req.body.photos[i] + "_resized", req.body.photos[i] + "_compressed");
-				const photo = fs.renameSync(req.body.photos[i] + "_resized", user.username + "_" + (i + (nbPhotosInDB + 1)) + ".jpg");
-				const imageBase64 = await imageToBase64(photo);
+				const photoPath = path.join(__dirname, "../" + req.files[i].path);
+				// console.log("photoPath = ", photoPath);
+				await resizeImage(photoPath, photoPath + "_resized", 500, 500);
+				await compressImageToUnder1MB(photoPath + "_resized", photoPath + "_compressed");
+				const newPhotoPath =  path.join(__dirname, "../photos/tmp/" + user.username + "_" + (i + (nbPhotosInDB + 1)) + ".jpg");
+				fs.renameSync(photoPath + "_resized", newPhotoPath);
+				const imageBase64 = await imageToBase64(newPhotoPath);
 				user.photos.push(imageBase64);
+				fs.rmSync(newPhotoPath);
 			}
 		}
 		if (req.body.profilePicture)
@@ -88,6 +100,7 @@ async function updateUser(req, res){
 			user.profilePicture = req.body.profilePicture;
 		}
 		await user.save();
+		res.status(200).json({ message: "User updated" });
 	} catch (error) {
 		console.log("Error in updateUser", error);
 		res.status(503).json({ message:  error.message });

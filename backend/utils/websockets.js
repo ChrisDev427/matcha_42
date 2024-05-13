@@ -58,7 +58,11 @@ async function setupWebSocket(server) {
     async function disconnectUser(userId) {
         await connectBdd();
         let user = await User.findById(userId);
+		if (!user) {
+			return;
+		}
         user.connected = false;
+		user.lastConnection = new Date();
         await user.save();
     }
 

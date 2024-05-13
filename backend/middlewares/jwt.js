@@ -1,4 +1,5 @@
 require('dotenv').config();
+const connectBdd = require('../utils/connectBdd');
 
 const jwt = require('jsonwebtoken');
 const JWT_SECRET = process.env.JWT_SECRET; // Clé secrète pour le access token
@@ -17,13 +18,14 @@ const verifyToken = async (req, res, next) => {
         if (err.name === "TokenExpiredError" && refreshToken) {
           // Vérifier le refresh token
           const decoded = jwt.verify(refreshToken, REFRESH_TOKEN_SECRET);
-          console.log("decoded= ", decoded);
+          // console.log("decoded= ", decoded);
           if (!decoded) {
             return res.sendStatus(403); // Refresh token invalide
           }
-          require('../utils/connectBdd');
           const User = require('../models/User');
+          connectBdd();
           const storedTokenData = await User.findById(decoded.userId);  // Récupérer le token stocké
+
           if (!storedTokenData || storedTokenData.refreshToken !== refreshToken) {
             return res.sendStatus(403); // Refresh token non valide ou non correspondant
           }
