@@ -1,7 +1,7 @@
 const bcrypt = require('bcrypt');
 const saltRounds = 10;
 const User = require('../models/User');
-const sendEmail = require('./sendEmailVerification');
+const { sendEmail } = require('./sendEmailVerification');
 const twig = require('twig');
 const { UUID } = require('mongodb');
 const path = require('path');
@@ -17,6 +17,13 @@ class DuplicationError extends Error {
 
 async function createUser(req, res) {
     try {
+        let ipAddress = req.ip;
+
+  // Si vous êtes derrière un reverse proxy comme Nginx ou un load balancer, utilisez :
+  ipAddress = req.headers['x-forwarded-for'] || req.ip;
+
+  console.log('Adresse IP du client:', ipAddress);
+        console.log("req.body = ", req.body);
         await connectBdd();
         const hash = await bcrypt.hash(req.body.password, saltRounds);
         const emailExist = await User.findOne({ email: req.body.email });

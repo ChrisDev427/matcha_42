@@ -19,7 +19,10 @@ const userSchema = new Schema({
   photos: [{ type: String}],//, validate: [arrayLimit, 'Cannot exceed 5 photos'] }],
   profilePicture: { type: Number, default: 1},
   fameRating: { type: Number, default: 0 }, // Fame rating can be calculated based on various criteria
+  reported : { type: Number, default: 0},
+  blackList: [{ type: Schema.Types.ObjectId, ref: 'User' }], // Array of user IDs who are blacklisted
   location: {
+	authorization: { type: Boolean, default: false },
 	type: { type: String, default: 'Point' }, // GeoJSON type
     coordinates: { type: [Number], default: [0, 0] } // Longitude, Latitude
   },

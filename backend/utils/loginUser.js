@@ -40,11 +40,16 @@ async function loginUser(req, res) {
             { expiresIn: REFRESH_TOKEN_EXPIRES_IN }
         );
 
-        // Stocker le refresh token dans la base de données ou une cache
 		user.refreshToken = refreshToken;
+		 // Séparation de la chaîne en latitude et longitude
+        // if (req.body.location) {
+        //     const latitude = parseFloat(req.body.location.split('Latitude: ')[1].split(',')[0]);
+        //     const longitude = parseFloat(req.body.location.split('Longitude: ')[1]);
+        //     user.location.coordinates = [latitude, longitude];
+        //     user.location.authorization = true;
+        // }
 		user.connected = true;
 		await user.save();
-        // par exemple Redis, avec gestion de l'expiration
 
         // Envoyer les tokens au client
         res.cookie('refreshToken', refreshToken, { httpOnly: true, secure: true, maxAge: 7 * 24 * 60 * 60 * 1000 }); // 7 jours en millisecondes

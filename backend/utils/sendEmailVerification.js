@@ -14,7 +14,7 @@ let transporter = nodemailer.createTransport({
 
 async function renderHTML(template, data) {
   return new Promise((resolve, reject) => {
-	twig.renderFile(path.join(__dirname, '../templates/mailVerif.twig'), data, (err, html) => {
+	twig.renderFile(path.join(__dirname, '../templates/' + template), data, (err, html) => {
 	  if (err) {
 		reject(err);
 	  }
@@ -26,7 +26,7 @@ async function renderHTML(template, data) {
 async function sendEmail(to, refreshToken) {
   try {
 	let subject = 'Matcha : Verify Your Email';
-	let html = await renderHTML('email-verification', { url: 'http://localhost:8080/verifyEmail', token: refreshToken});
+	let html = await renderHTML('mailVerif.twig', { url: 'http://localhost:8080/verifyEmail', token: refreshToken});
 	console.log('sending email');
     let info = await transporter.sendMail({
       from: '"Matcha Email-Vérif" transcendence-pong@outlook.com',
@@ -41,4 +41,22 @@ async function sendEmail(to, refreshToken) {
   }
 }
 
-module.exports = sendEmail;
+async function sendEmailResetPassword(to, refreshToken) {
+  try {
+  let subject = 'Matcha : Reset Password';
+  let html = await renderHTML('passwordForgot.twig', { url: 'http://localhost:8080/resetPassword', token: refreshToken, email: to});
+  console.log('sending email');
+    let info = await transporter.sendMail({
+      from: '"Matcha Email-Vérif" transcendence-pong@outlook.com',
+      to: to,
+      subject: subject,
+      html: html
+    });
+	console.log('Message sent: %s', info.messageId);
+  } catch (error) {
+	console.error(error);
+	throw new Error('Error sending email');
+  }
+}
+
+module.exports = { sendEmail, sendEmailResetPassword };

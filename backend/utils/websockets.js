@@ -2,8 +2,12 @@ const WebSocket = require('ws');
 const url = require('url');
 const User = require('../models/User');
 const likeUser = require('./like');
+const chatUser = require('./chatUser');
+const unlikeUser = require('./unlike');
 const viewedUser = require('./viewed');
 const connectBdd = require('./connectBdd');
+const pingLocation = require('./pingLocation');
+const { deleteNotification, notificationViewed } = require('./notificationHandler');
 
 let clients = new Map();
 
@@ -20,28 +24,35 @@ async function setupWebSocket(server) {
 
         ws.on('message', function incoming(message) {
             console.log('received: %s', message);
-            // ws.send(`Server received: ${message}`);
 			const parsedMessage = JSON.parse(message);
 			if (parsedMessage.type === 'like')
 			{
 				likeUser(parsedMessage.userId, parsedMessage.message);
 			}
+			else if (parsedMessage.type === 'unlike')
+			{
+				unlikeUser(parsedMessage.userId, parsedMessage.message);
+			}
 			else if (parsedMessage.type === 'viewed')
 			{
 				viewedUser(parsedMessage.userId, parsedMessage.message);
 			}
-			// else if (parsedMessage.type === 'notification')
-			// {
-			// 	notification(parsedMessage.userId);
-			// }
-			// else if (parsedMessage.type === 'deleteNotification')
-			// {
-			// 	deleteNotification(parsedMessage.userId, parsedMessage.message);
-			// }
-			// else if (parsedMessage.type === 'chat')
-			// {
-			// 	chatUser(parsedMessage.userId, parsedMessage.message);
-			// }
+			else if (parsedMessage.type === 'notification')
+			{
+				notificationViewed(parsedMessage.userId);
+			}
+			else if (parsedMessage.type === 'deleteNotification')
+			{
+				deleteNotification(parsedMessage.userId, parsedMessage.message);
+			}
+			else if (parsedMessage.type === 'chat')
+			{
+				chatUser(parsedMessage.userId, parsedMessage.message);
+			}
+			else if (parsedMessage.type === 'pingLocation')
+			{
+				pingLocation(parsedMessage.userId);
+			}
         });
 
         ws.on('close', () => {
@@ -69,4 +80,10 @@ async function setupWebSocket(server) {
     return wss;
 }
 
-module.exports = { setupWebSocket, clients };
+async function pingClientsForCurrentLocation() {
+	for (let [userId, ws] of clients) {
+		ws.send(JSON.stringify({type: 'pingLocation', userId: userId}));
+	}
+}
+
+module.exports = { setupWebSocket, clients, pingClientsForCurrentLocation };
