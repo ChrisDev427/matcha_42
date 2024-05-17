@@ -31,7 +31,7 @@ const verifyToken = async (req, res, next) => {
           }
           // Générer un nouvel access token
           const newAccessToken = jwt.sign({ userId: decoded.userId }, JWT_SECRET, { expiresIn: '15m' });
-          res.setHeader('Authorization', `Bearer ${newAccessToken}`);
+          res.json({accessToken : newAccessToken});
           req.user = decoded;
           next();
         } else {

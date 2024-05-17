@@ -4,6 +4,13 @@
     <h3 id="sub--title">{{ $t("registerSubTitle") }}</h3>
     <form class="register--form" @submit.prevent="submitForm">
       <input
+  v-model="inputs.location"
+  type="text"
+  :placeholder="$t('location')"
+  readonly
+/>
+
+      <input
         v-model="inputs.userName"
         :maxlength="maxLength"
         type="text"
@@ -156,25 +163,49 @@ export default {
     //         inputs.value.password
     //     )
     // }
+    async function getLocation() {
+  if ('geolocation' in navigator) {
+    navigator.geolocation.getCurrentPosition(function(position) {
+      console.log("Latitude: " + position.coords.latitude);
+      console.log("Longitude: " + position.coords.longitude);
+       // Créer la structure de données avec latitude et longitude
+       const location = { latitude: position.coords.latitude, longitude: position.coords.longitude };
+      // Assigner la structure de données à inputs.value.location
+      inputs.value.location = location;
+    }, function(error) {
+      console.error("Erreur de géolocalisation: " + error.message);
+      inputs.value.location = "Erreur de géolocalisation";
+    }, {
+      maximumAge: 60000,
+      timeout: 5000,
+      enableHighAccuracy: true
+    });
+  } else {
+    console.error("Géolocalisation n'est pas prise en charge par ce navigateur.");
+    inputs.value.location = "Géolocalisation non prise en charge";
+  }
+}
 
-    async function submitForm() {
-      try {
-        // Envoyer les données du formulaire au backend Node.js
-        const response = await fetch("/submit-form", {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify(this.inputs),
-        });
-        console.log(response);
-        // Gérer la réponse du backend si nécessaire
-      } catch (error) {
-        console.error("Error submitting form:", error);
-      }
-    }
+
+
+async function submitForm() {
+  try {
+    await getLocation();
+    const response = await fetch("/submit-form", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(this.inputs),
+    });
+    console.log(response);
+  } catch (error) {
+    console.error("Error submitting form:", error);
+  }
+}
 
     return {
+      getLocation,
       registerTitle,
       registerSubTitle,
       userName,

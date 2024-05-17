@@ -61,6 +61,12 @@ app.post('/updateUser', verifyToken, getLocationWithIp, upload.array('photos'), 
 
 app.get('/profile/:username', verifyToken, getLocationWithIp, require('./utils/getUser'), (req, res) => {});
 
+app.get('/verifyToken', verifyToken, (req, res) => {
+	res.send({ message: "Token is valid" });
+});
+
+
+
 app.use(express.static('../frontend/dist'));
 
 

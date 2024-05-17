@@ -50,7 +50,7 @@ ws.onclose = function() {
     console.log('Connection is closed.');
 };
 
-    }
+}
 
     // Nettoyer et fermer la connexion WebSocket lors du démontage du composant
     function cleanupWebSocket() {
