@@ -9,10 +9,11 @@
     <div class="buttons--container">
       <div class="buttons">
         <LangSelectBtn></LangSelectBtn>
-        <template v-if="$store.getters.getIsConnected">
-          <ProfileBtn></ProfileBtn>
-        </template>
-        <ConnectBtn></ConnectBtn>
+
+        <ProfileBtn v-if="$store.getters.getIsConnected"></ProfileBtn>
+
+        <ConnectBtn v-if="!$store.getters.getIsConnected"></ConnectBtn>
+        <DisconnectBtn v-if="$store.getters.getIsConnected"></DisconnectBtn>
       </div>
     </div>
   </div>
@@ -22,6 +23,7 @@
 import TitleCmp from "./TitleCmp.vue";
 import LangSelectBtn from "./LangSelectBtn.vue";
 import ConnectBtn from "./ConnectBtn.vue";
+import DisconnectBtn from "./DisconnectBtn.vue";
 import ProfileBtn from "./ProfileBtn.vue";
 // import { useStore } from "vuex";
 
@@ -34,12 +36,13 @@ export default {
     LangSelectBtn,
     ConnectBtn,
     ProfileBtn,
+    DisconnectBtn,
   },
   data() {
     // const store = useStore();
     return {
       headerOpacity: 1,
-    //   connectionState: store.getters.getConnectionState,
+      //   connectionState: store.getters.getConnectionState,
     };
   },
   //   setup() {
@@ -82,7 +85,7 @@ export default {
   /* Ajoutez le dégradé noir transparent */
   background-image: linear-gradient(
     to bottom,
-    rgb(0, 0, 0) 20%,
+    rgb(0, 0, 0) 5%,
     rgba(0, 0, 0, 0)
   );
 

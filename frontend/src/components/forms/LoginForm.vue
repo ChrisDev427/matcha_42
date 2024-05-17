@@ -1,40 +1,25 @@
 <template>
   <div>
-    <div class="login--container" v-if="!$store.getters.getLoginFormSent">
+    <div class="login--container" v-if="!$store.getters.getIsLoginFormSent">
       <h3>Matcha</h3>
-      <form action="" class="login--form">
-        <input
-          v-model="inputs.userName"
-          :maxlength="maxLength"
-          type="text"
-          :placeholder="$t('userName')"
-        />
-        <input
-          v-model="inputs.password"
-          type="password"
-          :placeholder="$t('password')"
-        />
-        <button
-        @click="submitLoginForm()"
-          :class="{ 'disabled--btn': !inputs.userName || !inputs.password }"
-        >
+      <form class="login--form" @submit.prevent="submitForm">
+        <input name="username" v-model="inputs.username" :maxlength="maxLength" type="text" :placeholder="$t('userName')" />
+        <input name="password" v-model="inputs.password" type="password" :placeholder="$t('password')" />
+        <button :class="{ 'disabled--btn': !isFormValid }" :disabled="!isFormValid">
           {{ $t("connect") }}
         </button>
-        <router-link
-          class="forgot--password"
-          :to="{ name: 'ForgotPassPage', params: {} }"
-        >
+        <router-link class="forgot--password" :to="{ name: 'ForgotPassPage', params: {} }">
           <span>
             <p>{{ $t("forgotPassword") }}</p>
           </span>
         </router-link>
       </form>
     </div>
-    <LoginSuccess v-if="$store.getters.getServerResponseValue === 201"></LoginSuccess>
-    <LoginFail v-if="$store.getters.getServerResponseValue === 404"></LoginFail>
-    <LoginErrorPassword v-if="$store.getters.getServerResponseValue === 401 && $store.getters.getServerMessage === 'Wrong Password'"></LoginErrorPassword>
-    <LoginErrorEmailVerif v-if="$store.getters.getServerResponseValue === 401 && $store.getters.getServerMessage === 'Email not verified'"></LoginErrorEmailVerif>
-    <LoginErrorServer v-if="$store.getters.getServerResponseValue === 500"></LoginErrorServer>
+    <LoginSuccess v-if="$store.getters.getServerMessage === 'success'"></LoginSuccess>
+    <LoginFail v-if="$store.getters.getServerMessage === 'loginFail'"></LoginFail>
+    <LoginErrorPassword v-if="$store.getters.getServerMessage === 'wrongPassword'"></LoginErrorPassword>
+    <LoginErrorEmailVerif :username="inputs.username" v-if="$store.getters.getServerMessage === 'emailNotVerif'"></LoginErrorEmailVerif>
+    <LoginErrorServer v-if="$store.getters.getServerMessage === 'serverError'"></LoginErrorServer>
   </div>
 </template>
 
@@ -42,7 +27,6 @@
 import { useI18n } from "vue-i18n";
 import { ref, watch } from "vue";
 import { useStore } from "vuex";
-
 import LoginSuccess from "@/components/forms/LoginSuccess.vue";
 import LoginErrorServer from "@/components/forms/LoginErrorServer.vue";
 import LoginFail from "@/components/forms/LoginFail.vue";
@@ -53,21 +37,17 @@ export default {
   name: "LoginForm",
   components: {
     LoginSuccess,
+    LoginErrorServer,
     LoginFail,
     LoginErrorPassword,
     LoginErrorEmailVerif,
-    LoginErrorServer,
   },
 
   setup() {
+
     const store = useStore();
-    console.log("response ", store.getters.getServerResponseValue);
-    console.log("loginState ", store.getters.getLoginState);
-
-    store.commit("setLoginFormSent", true);
-    store.commit("setServerResponseValue", 201);
-    store.commit("setServerMessage", 'Email not verified');
-
+    store.commit('setServerMessage', 'emailNotVerif');
+    store.commit('setIsLoginFormSent', true);
     const maxLength = 15;
 
     // Traduction
@@ -76,41 +56,37 @@ export default {
     const userName = t("userName");
     const password = t("password");
     const connect = t("connect");
-
     // inputs
     let inputs = ref({
-      userName: "",
+      username: "",
       password: "",
     });
+   
     watch(
       inputs,
       (newValue) => {
-        if (newValue.userName == "") {
+        if (newValue.username == "") {
           inputs.value.password = "";
         }
       },
       { deep: true }
     );
 
-    async function submitLoginForm() {
-      try {
-        // Envoyer les données du formulaire au backend Node.js
-        const response = await fetch("/login-form", {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify(this.inputs),
-        });
-        store.commit('setRegisterFormSent', true);
-        store.commit('setServerResponseValue', response.status);
-        store.commit('setServerMessage', response.massage);
+    function submitForm(event) {
+      event.preventDefault();
+      
+      // Récupérer les données du formulaire
+      const formData = {
+        username: event.target.username.value,
+        password: event.target.password.value
+      };
+      store.commit('setIsLoading', true);
+      console.log('CCCCC');
+      setTimeout(() => {
        
-        console.log(response);
-        // Gérer la réponse du backend si nécessaire
-      } catch (error) {
-        console.error("Error submitting form:", error);
-      }
+        store.dispatch('submitLoginForm', formData);
+        inputs.value.password = "";
+      }, 1000);
     }
 
     return {
@@ -120,15 +96,26 @@ export default {
       connect,
       maxLength,
       inputs,
-      submitLoginForm,
+      submitForm,
+      LoginSuccess,
+      LoginFail,
+      LoginErrorEmailVerif,
+      LoginErrorPassword,
+      LoginErrorServer,
     };
+  },
+  computed: {
+    isFormValid() {
+      const { username, password } = this.inputs;
+      return username && password;
+    }
   },
 };
 </script>
 
 <style lang="scss">
 .login--container {
-//   border: solid 1px red;
+  //   border: solid 1px red;
   display: grid;
   justify-items: center;
   margin: 0px 20px 20px 20px;
@@ -148,8 +135,9 @@ export default {
     font-weight: 900;
     font-size: 4rem;
     text-shadow: 0 0 18px rgba(255, 255, 255, 0.438);
+
     @media (min-width: 200px) and (max-width: 400px) {
-        font-size: 2.5rem;
+      font-size: 2.5rem;
     }
   }
 
@@ -199,6 +187,7 @@ export default {
         transform: scale(1.1);
       }
     }
+
     .disabled--btn {
       opacity: 0.6;
       cursor: default;
@@ -232,7 +221,7 @@ export default {
             font-style: normal;
             color: white;
             font-weight: 700;
-            transform: scale(1.1);
+            transform: scale(1.0.5);
           }
         }
       }

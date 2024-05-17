@@ -1,6 +1,8 @@
 <template>
   <router-link class="connect-btn" :to="{ name: 'LoginPage', params: {} }">
-    <span><i class="fi fi-br-sign-in-alt"></i></span>
+    <!-- <span><i class="fi fi-br-sign-in-alt"></i></span> -->
+    <span><i class="fa-solid fa-right-to-bracket"></i></span>
+
     <!-- <span>{{ $t("connect") }}</span> -->
   </router-link>
 </template>
@@ -30,13 +32,9 @@ export default {
     user-select: none;
     opacity: 1;
     transition: all 0.3s;
-    i {
-      display: grid;
-      align-items: center;
-      font-size: 1.8rem;
-      color: white;
-      margin-top: 1px;
-    }
+    font-size: 1.8rem;
+    color: white;
+    margin-top: 1px;
 
     &:hover {
       opacity: 0.8;
@@ -50,10 +48,7 @@ export default {
     span {
       width: 50px;
       height: 40px;
-
-      i {
-        font-size: 1.6rem;
-      }
+      font-size: 1.6rem;
     }
   }
 }

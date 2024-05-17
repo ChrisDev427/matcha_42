@@ -9,19 +9,19 @@
     </div>
     <div class="return--btn" :to="{ name: 'LoginPage', params: {} }">
       <span
-        ><i
-          class="fi fi-br-sign-in-alt"
           @click="
-            $store.commit('setServerResponseValue', null),
-              $store.commit('setRegisterFormSent', false),
+            $store.commit('setIsRegisterFormSent', false),
               $store.commit('setServerMessage', '')
           "
+        ><i
+          class="fa-solid fa-circle-arrow-left"
         ></i
       ></span>
     </div>
   </div>
 </template>
-  
+
+
   <script>
 import { useI18n } from "vue-i18n";
 import { replace_newLine_to_br_tags } from "@/libft/libft.js";
@@ -77,7 +77,7 @@ export default {
       text-align: center;
       padding: 10px;
       font-size: calc(min(1vw + 1.1vh, 15px));
-      margin:  0 auto 20px auto;
+      margin: 0 auto 20px auto;
       word-wrap: break-word;
     }
   }
@@ -91,19 +91,14 @@ export default {
     span {
       cursor: pointer;
       user-select: none;
-
-      i {
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        transform: rotate(180deg);
-
-        font-size: 1.8rem;
-        color: white;
-        transition: all ease-in-out 0.3s;
-        &:hover {
-          color: var(--light-pink);
-        }
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.8rem;
+      color: white;
+      transition: all ease-in-out 0.3s;
+      &:hover {
+        color: var(--light-pink);
       }
     }
   }

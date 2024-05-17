@@ -9,12 +9,12 @@
     </div>
     <router-link class="login--btn" :to="{ name: 'LoginPage', params: {} }">
       <span
-        ><i
-          class="fi fi-br-sign-in-alt"
           @click="
-            $store.commit('setServerResponseValue', null),
-              $store.commit('setServerMessage', '')
+            $store.commit('setServerMessage', ''),
+            $store.commit('setIsRegisterFormSent', false)
           "
+        ><i
+          class="fa-solid fa-right-to-bracket"
         ></i
       ></span>
     </router-link>
@@ -90,18 +90,14 @@ export default {
     span {
       cursor: pointer;
       user-select: none;
-
-      i {
-        display: flex;
-        align-items: center;
-        justify-content: center;
-
-        font-size: 1.8rem;
-        color: white;
-        transition: all ease-in-out 0.3s;
-        &:hover {
-          color: var(--light-pink);
-        }
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.8rem;
+      color: white;
+      transition: all ease-in-out 0.3s;
+      &:hover {
+        color: var(--light-pink);
       }
     }
   }

@@ -9,14 +9,11 @@
     </div>
     <div class="return--btn" :to="{ name: 'LoginPage', params: {} }">
       <span
-        ><i
-          class="fi fi-br-sign-in-alt"
-          @click="
-            $store.commit('setServerResponseValue', null),
-            $store.commit('setLoginFormSent', false),
-            $store.commit('setServerMessage', '')
-          "
-        ></i
+        @click="
+          $store.commit('setIsLoginFormSent', false);
+          $store.commit('setServerMessage', '');
+        "
+        ><i class="fa-solid fa-circle-arrow-left"></i
       ></span>
     </div>
   </div>
@@ -34,7 +31,6 @@ export default {
     // Utilisation de la fonction de traduction
     const errorTitle = t("errorTitle");
     const wrongPasswordText = t("wrongPasswordText");
-
 
     return {
       errorTitle,
@@ -96,19 +92,14 @@ export default {
     span {
       cursor: pointer;
       user-select: none;
-
-      i {
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        transform: rotate(180deg);
-
-        font-size: 1.8rem;
-        color: white;
-        transition: all ease-in-out 0.3s;
-        &:hover {
-          color: var(--light-pink);
-        }
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.8rem;
+      color: white;
+      transition: all ease-in-out 0.3s;
+      &:hover {
+        color: var(--light-pink);
       }
     }
   }

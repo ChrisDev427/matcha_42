@@ -1,8 +1,8 @@
 <template>
   <section>
-    <template v-if="!connectionState">
+    <template v-if="!$store.getters.getIsConnected">
       <div class="home">
-        <div class="main--title fade-In" @onclick="fadeOutTitle">
+        <div class="main--title fade-In">
           <h1>swipe right,</h1>
           <h1>match,</h1>
           <h1 id="date">date !</h1>
@@ -15,7 +15,7 @@
         </router-link>
       </div>
     </template>
-    <template v-if="connectionState">
+    <template v-if="$store.getters.getIsConnected">
       <MainPage />
     </template>
   </section>
@@ -23,10 +23,7 @@
 
 <script>
 import { useI18n } from "vue-i18n";
-import { useStore } from "vuex";
-import { computed } from "vue";
-import MainPage from "@/pages/MainPage.vue"
-
+import MainPage from "@/pages/MainPage.vue";
 
 export default {
   name: "HomePage",
@@ -35,13 +32,7 @@ export default {
     MainPage,
   },
 
-  data() {
-    const store = useStore();
-
-    return {
-      connectionState: computed(() => store.getters.getConnectionState),
-    };
-  },
+  
 
   setup() {
     const { t } = useI18n();
@@ -52,6 +43,7 @@ export default {
   },
 };
 </script>
+
 
 <style lang="scss" scoped>
 .home {
@@ -115,8 +107,7 @@ export default {
         opacity: 0.8;
         transform: scale(1.15);
         // color: black;
-				color: var(--light-pink);
-
+        color: var(--light-pink);
       }
     }
   }

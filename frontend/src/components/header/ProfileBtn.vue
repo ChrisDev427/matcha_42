@@ -1,6 +1,7 @@
 <template>
   <router-link class="profile-btn" :to="{ name: 'ProfilePage', params: {} }">
-    <span><i class="fi fi-br-portrait"></i></span>
+    <span><i class="fa-solid fa-user"></i></span>
+    <!-- <span><i class="fi fi-br-portrait"></i></span> -->
   </router-link>
 </template>
 
@@ -29,14 +30,10 @@ export default {
     user-select: none;
     opacity: 1;
     transition: all 0.3s;
-    i {
-      display: grid;
-      align-items: center;
-      font-size: 1.8rem;
-      color: white;
-      transition: ease-in-out 0.2s;
-      margin-top: 1px;
-    }
+    font-size: 1.6rem;
+    color: white;
+    transition: ease-in-out 0.2s;
+    margin-top: 1px;
 
     &:hover {
       opacity: 0.8;
@@ -50,10 +47,7 @@ export default {
     span {
       width: 50px;
       height: 40px;
-
-      i {
-        font-size: 1.6rem;
-      }
+      font-size: 1.4rem;
     }
   }
 }

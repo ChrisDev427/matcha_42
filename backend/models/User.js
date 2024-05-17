@@ -2,7 +2,7 @@ const mongoose = require('mongoose');
 const Schema = mongoose.Schema;
 
 const userSchema = new Schema({
-  username: { type: String, required: true },
+  username: { type: String, required: true, unique: true},
   password: { type: String, required: true },
   firstname: { type: String, required: true },
   lastname: { type: String, required: true },
@@ -10,12 +10,14 @@ const userSchema = new Schema({
   verified: { type: Boolean, default: false },
   refreshToken: { type: String , default: 'None'},
   connected: { type: Boolean, default: false },
+  lastConnection: { type: Date, default: null },
   gender: { type: String, enum: ['Male', 'Female', 'Other', 'None'], default: 'None' },
   sexualPreferences: { type: String, enum: ['Male', 'Female', 'Both', 'None'], default: 'None' },
   biography: { type: String, default: 'bio here' },
+  age: { type: Number, default: null },
   interests: [{ type: String }], // Tags like #vegan, #geek, etc.
   photos: [{ type: String}],//, validate: [arrayLimit, 'Cannot exceed 5 photos'] }],
-  profilePicture: { type: String, default: 'default.jpg' },
+  profilePicture: { type: Number, default: 1},
   fameRating: { type: Number, default: 0 }, // Fame rating can be calculated based on various criteria
   location: {
 	type: { type: String, default: 'Point' }, // GeoJSON type
@@ -23,8 +25,14 @@ const userSchema = new Schema({
   },
   viewedBy: [{ type: Schema.Types.ObjectId, ref: 'User' }], // Array of user IDs who viewed the profile
   likedBy: [{ type: Schema.Types.ObjectId, ref: 'User' }], // Array of user IDs who liked the profile
-}, {
   matcha: [{ type: Schema.Types.ObjectId, ref: 'User' }], // Array of user IDs who matched each other
+  notifications: [{ // Array of notifications
+	title: { type: String, required: true },
+	body: { type: String, required: true },
+	viewed : { type: Boolean, default: false },
+	date: { type: Date, default: Date.now }
+  }],
+}, {
   timestamps: true, // Adds createdAt and updatedAt timestamps,
 });
 

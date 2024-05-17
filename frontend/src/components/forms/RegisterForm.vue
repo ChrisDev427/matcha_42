@@ -1,29 +1,33 @@
 <template>
   <div>
 
-    <div class="register--container" v-if="!$store.getters.getRegisterFormSent">
+    <div class="register--container" v-if="!$store.getters.getIsRegisterFormSent">
       <h3>{{ $t("registerTitle") }}</h3>
       <h3 id="sub--title">{{ $t("registerSubTitle") }}</h3>
       <form class="register--form" @submit.prevent="submitForm">
         <input
+          name="username"
           v-model="inputs.userName"
           :maxlength="maxLength"
           type="text"
           :placeholder="$t('userName')"
         />
         <input
+          name="firstname"
           v-model="inputs.firstName"
           :maxlength="maxLength"
           type="text"
           :placeholder="$t('firstName')"
         />
         <input
+          name="lastname"
           v-model="inputs.lastName"
           :maxlength="maxLength"
           type="text"
           :placeholder="$t('lastName')"
         />
         <input
+          name="email"
           v-model="inputs.email"
           type="email"
           placeholder="e-mail"
@@ -33,6 +37,7 @@
           }"
         />
         <input
+          name="password"
           v-model="inputs.password"
           :disabled="!inputs.emailValid"
           :class="{
@@ -55,27 +60,20 @@
         />
 
         <button
-          @click="submitRegisterForm()"
+          
           class="send--registration--btn"
           type="submit"
-          :class="{
-            'disabled--btn':
-              !inputs.samePassword ||
-              !inputs.emailValid ||
-              !inputs.userName ||
-              !inputs.firstName ||
-              !inputs.lastName,
-          }"
-        >
+          :class="{'disabled--btn': !isFormValid}"
+          :disabled="!isFormValid">
           {{ $t("send") }}
         </button>
       </form>
     </div>
   
-    <RegisterSuccess v-if="$store.getters.getServerResponseValue === 201" />
-    <RegisterErrorUserName v-if="$store.getters.getServerResponseValue === 409 && $store.getters.getServerMessage === 'Username already exists'" />
-    <RegisterErrorEmail v-if="$store.getters.getServerResponseValue === 409 && $store.getters.getServerMessage === 'Email already exists' "/>
-    <RegisterErrorServer v-if="$store.getters.getServerResponseValue === 503" />
+    <RegisterSuccess v-if="$store.getters.getServerMessage === 'registerSuccess'" />
+    <RegisterErrorUserName v-if="$store.getters.getServerMessage === 'userExist'" />
+    <RegisterErrorEmail v-if="$store.getters.getServerMessage === 'emailExist'"/>
+    <RegisterErrorServer v-if="$store.getters.getServerMessage === 'serverError'" />
    
   </div>
 </template>
@@ -107,8 +105,9 @@ export default {
     const store = useStore();
     // store.commit('setRegisterFormSent', true);
     // store.commit('setServerResponseValue', 503);
-    // store.commit('setServerMessage', 'Username already exists');
-    
+    // store.commit('setServerMessage', 'serverError');
+    // store.commit('setIsLoading', true);
+    // store.commit('setIsLoading', false);
     
     const maxLength = 15;
    
@@ -138,7 +137,7 @@ export default {
       repeatPassword: "",
       samePassword: false,
     });
-
+    
     watch(
       inputs,
       (newValue) => {
@@ -162,39 +161,89 @@ export default {
       },
       { deep: true }
     );
-   
-   
-    async function submitRegisterForm() {
-      try {
-        // Envoyer les données du formulaire au backend Node.js
-        const response = await fetch("/register-form", {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify(this.inputs),
-        });
-        store.commit('setRegisterFormSent', true);
-        store.commit('setServerResponseValue', response.status);
-        store.commit('setServerMessage', response.massage);
+    function submitForm(event) {
+      event.preventDefault();
+      
+      console.log('submit form register');
+      // Récupérer les données du formulaire
+      const formData = {
+        userName: event.target.username.value,
+        firstName: event.target.firstname.value,
+        lastName: event.target.lastname.value,
+        email: event.target.email.value,
+        password: event.target.password.value
+      };
+ 
+      store.commit('setIsLoading', true);
+      setTimeout(() => {
        
-        console.log(response.status);
-        console.log(response.message);
-        // Gérer la réponse du backend si nécessaire
-      } catch (error) {
-        console.error("Error submitting form:", error);
-      }
+        store.dispatch('submitRegisterForm', formData)
+        Object.keys(inputs.value).forEach(key => {
+          inputs.value[key] = ""; // Réinitialiser à une chaîne vide
+        });
+      }, 1000);
     }
+   
+    // Object.keys(inputs.value).forEach(key => {
+    //   if (typeof inputs.value[key] !== 'string') {
+    //     inputs.value[key] = null; // Réinitialiser à null ou à la valeur par défaut
+    //   } else {
+    //     inputs.value[key] = ""; // Réinitialiser à une chaîne vide
+    //   }
+    // });
+    // async function submitRegisterForm() {
+    //   store.commit('setIsLoading', true);
+
+    //   try {
+    //     // Envoyer les données du formulaire au backend Node.js
+    //     const response = await fetch("/register-form", {
+    //       method: "POST",
+    //       headers: {
+    //         "Content-Type": "application/json",
+    //       },
+    //       body: JSON.stringify(this.inputs),
+    //     });
+    //     const responseData = await response.json();
+    //     switch (response.status) {
+    //       case 201:
+    //         store.commit('setServerMessage', 'registerSuccess');
+    //         break;
+    //       case 409:
+    //         if (responseData.message === 'Username already exists') {
+    //           store.commit('setServerMessage', 'userExist');
+    //         }
+    //         if (responseData.message === 'Email already exists') {
+    //           store.commit('setServerMessage', 'emailExist');
+    //         }
+    //         break;
+    //       case 503:
+    //         store.commit('setServerMessage', 'serverError');
+    //         break;
+    //     }
+    //   } catch (error) {
+    //     console.error("Error submitting form:", error);
+    //   } finally {
+    //     store.commit('setIsRegisterFormSent', true);
+    //     store.commit('setIsLoading', false);
+    //   }
+    // }
 
     return {
       i18,
       inputs,
       maxLength,
       validateEmail,
-      submitRegisterForm,
+      // submitRegisterForm,
+      submitForm,
      
     };
   },
+  computed: {
+  isFormValid() {
+    const { samePassword, emailValid, userName, firstName, lastName } = this.inputs;
+    return samePassword && emailValid && userName && firstName && lastName;
+  }
+},
 };
 </script>
 

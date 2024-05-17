@@ -29,12 +29,12 @@ export default {
 
       setTimeout(() => {
         store.commit('setIsConnected', true);
-        store.commit('setServerResponse', null);
+        store.commit('setIsLoginFormSent', false);
         store.commit('setServerMessage', '');
         router.push({ name: 'MainPage' });
       }, 3000)
     }
-    
+
     onMounted(goToMainPage);
     return {
       loginSuccessText,
@@ -68,6 +68,7 @@ export default {
       font-size: calc(min(3.5vw + 2.5vh, 60px));
       text-shadow: 0 0 18px rgba(255, 255, 255, 0.438);
     }
+
     h3 {
       // border: solid 1px red;
       margin: -10px 0 0 0;

@@ -1,15 +1,16 @@
 const jwt = require('jsonwebtoken');
 const bcrypt = require('bcrypt');
 const User = require('../models/User');
+const connectBdd = require('./connectBdd');
 
 const JWT_SECRET = process.env.JWT_SECRET;
-const JWT_EXPIRES_IN = '15m'; // Durée de validité du access token réduite
+const JWT_EXPIRES_IN = '10s';
 const REFRESH_TOKEN_SECRET = process.env.REFRESH_TOKEN_SECRET;
-const REFRESH_TOKEN_EXPIRES_IN = '7d'; // Durée de validité du refresh token
+const REFRESH_TOKEN_EXPIRES_IN = '7d';
 
 async function loginUser(req, res) {
     try {
-		require('./connectBdd');
+		await connectBdd();
         const { username, password } = req.body;
         const user = await User.findOne({ username });
         if (!user) {
@@ -47,7 +48,7 @@ async function loginUser(req, res) {
 
         // Envoyer les tokens au client
         res.cookie('refreshToken', refreshToken, { httpOnly: true, secure: true, maxAge: 7 * 24 * 60 * 60 * 1000 }); // 7 jours en millisecondes
-        res.json({
+        res.status(201).json({
             message: "Connexion réussie",
             accessToken,
             user: {

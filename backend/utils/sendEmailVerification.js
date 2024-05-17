@@ -1,30 +1,43 @@
 const nodemailer = require('nodemailer');
+const twig = require('twig');
+const path = require('path');
 
-// Créer un transporteur reutilisable en utilisant les paramètres par défaut de SMTP
 let transporter = nodemailer.createTransport({
-  host: 'smtp-mail.outlook.com', // Remplacez par votre serveur SMTP
+  host: 'smtp-mail.outlook.com',
   port: 587,
-  secure: false, // true pour le port 465, false pour les autres ports
+  secure: false,
   auth: {
-    user: 'transcendence-pong@outlook.com', // Votre adresse e-mail
-    pass: process.env.EMAIL_PASSWORD // Votre mot de passe
+    user: 'transcendence-pong@outlook.com',
+    pass: process.env.EMAIL_PASSWORD
   }
 });
 
-// Fonction d'envoi d'email
-async function sendEmail(to, subject, text) {
+async function renderHTML(template, data) {
+  return new Promise((resolve, reject) => {
+	twig.renderFile(path.join(__dirname, '../templates/mailVerif.twig'), data, (err, html) => {
+	  if (err) {
+		reject(err);
+	  }
+	  resolve(html);
+	});
+  });
+}
+
+async function sendEmail(to, refreshToken) {
   try {
+	let subject = 'Matcha : Verify Your Email';
+	let html = await renderHTML('email-verification', { url: 'http://localhost:8080/#/VerifyEmailPage', token: refreshToken});
 	console.log('sending email');
     let info = await transporter.sendMail({
-      from: '"Matcha Email-Vérif" transcendence-pong@outlook.com', // adresse de l'expéditeur
-      to: to, // liste des destinataires
-      subject: subject, // Sujet du message
-      text: text, // corps du message en texte brut
-      // html: "<b>Hello world?</b>" // corps du message en HTML
+      from: '"Matcha Email-Vérif" transcendence-pong@outlook.com',
+      to: to,
+      subject: subject,
+      html: html
     });
 	console.log('Message sent: %s', info.messageId);
   } catch (error) {
 	console.error(error);
+	throw new Error('Error sending email');
   }
 }
 
