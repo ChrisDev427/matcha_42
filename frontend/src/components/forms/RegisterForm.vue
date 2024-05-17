@@ -79,12 +79,10 @@
 </template>
 
 <script>
-import { useI18n } from "vue-i18n";
+
 import { ref, watch } from "vue";
 import { validateEmail } from "@/libft/libft.js";
 import { useStore } from "vuex";
-// import { computed } from "vue";
-// import { mapGetters } from 'vuex';
 import RegisterSuccess from "@/components/forms/RegisterSuccess.vue";
 import RegisterErrorServer from "@/components/forms/RegisterErrorServer.vue";
 import RegisterErrorUserName from "@/components/forms/RegisterErrorUserName.vue";
@@ -99,8 +97,6 @@ export default {
     RegisterErrorEmail,
   },
 
-
-
   setup() {
     const store = useStore();
     // store.commit('setRegisterFormSent', true);
@@ -110,22 +106,6 @@ export default {
     // store.commit('setIsLoading', false);
     
     const maxLength = 15;
-   
-
-    // Traduction ----------------------------------
-    const { t } = useI18n();
-
-    const i18 = {
-      registerTitle: t("registerTitle"),
-      registerSubTitle: t("registerSubTitle"),
-      userName: t("userName"),
-      firstName: t("firstName"),
-      lastName: t("lastName"),
-      password: t("password"),
-      passwordConfirm: t("passwordConfirm"),
-      send: t("send"),
-    };
-
     // Input Object --------------------------------
     let inputs = ref({
       userName: "",
@@ -229,13 +209,10 @@ export default {
     // }
 
     return {
-      i18,
       inputs,
       maxLength,
       validateEmail,
-      // submitRegisterForm,
       submitForm,
-     
     };
   },
   computed: {

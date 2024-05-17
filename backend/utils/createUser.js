@@ -1,7 +1,7 @@
 const bcrypt = require('bcrypt');
 const saltRounds = 10;
 const User = require('../models/User');
-const sendEmail = require('./sendEmailVerification');
+const {sendEmail} = require('./sendEmailVerification');
 const twig = require('twig');
 const { UUID } = require('mongodb');
 const path = require('path');

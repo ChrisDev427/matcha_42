@@ -20,21 +20,16 @@
 </template>
   
   <script>
-import { useI18n } from "vue-i18n";
+
 import { replace_newLine_to_br_tags } from "@/libft/libft.js";
 
 export default {
   name: "RegisterErrorEmail",
 
   setup() {
-    const { t } = useI18n();
-    // Utilisation de la fonction de traduction
-    const errorTitle = t("errorTitle");
-    const registrationErrorEmailText = t("registrationErrorEmailText");
-
+   
     return {
-      errorTitle,
-      registrationErrorEmailText,
+     
       replace_newLine_to_br_tags,
     };
   },

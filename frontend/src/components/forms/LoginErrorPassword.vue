@@ -20,21 +20,17 @@
 </template>
   
   <script>
-import { useI18n } from "vue-i18n";
+
 import { replace_newLine_to_br_tags } from "@/libft/libft.js";
 
 export default {
   name: "RegisterErrorPassword",
 
   setup() {
-    const { t } = useI18n();
-    // Utilisation de la fonction de traduction
-    const errorTitle = t("errorTitle");
-    const wrongPasswordText = t("wrongPasswordText");
+   
 
     return {
-      errorTitle,
-      wrongPasswordText,
+     
       replace_newLine_to_br_tags,
     };
   },

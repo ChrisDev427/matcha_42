@@ -50,9 +50,12 @@ export const i18n = createI18n({
       wrongPasswordText: 'Wrong Password !',
       emailNotVerifiedText: 'Please verify your email address to log in.',
 
-      emailVerified: 'Your email has been verified successfully.',
+     
       reSendEmail: 'Resend email',
-
+      reSendEmail_emailSent: 'Email sent',
+      reSendEmail_userNotMatch: 'User not match !',
+      reSendEmail_alreadyVerified: 'E-mail already verified !',
+      reSendEmail_serverError: 'Server error, try again later...',
 
       forgotPassword: 'Forgot password ?',
       resetPassword: 'reset password',
@@ -93,8 +96,13 @@ export const i18n = createI18n({
       wrongPasswordText: 'Mot de passe incorrect !',
       emailNotVerifiedText: 'Merci de vérifier votre adresse e-mail pour vous connecter.',
 
-      emailVerified: 'Votre adresse a été verifiée avec succès.',
+      
       reSendEmail: 'Renvoyer le mail',
+      reSendEmail_emailSent: 'E-mail envoyé',
+      reSendEmail_userNotMatch: 'Utilisateur non trouvé !',
+      reSendEmail_alreadyVerified: 'E-mail déjà verifié !',
+      reSendEmail_serverError: 'Erreur serveur, veuillez réessayer plus tard...',
+      
 
       forgotPassword: 'Mot de passe oublié ?',
       resetPassword: 'reinitialiser le mot de passe',

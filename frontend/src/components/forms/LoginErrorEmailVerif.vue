@@ -17,19 +17,28 @@
       ></span>
     </div>
     <div class="send--email--verif">
-      <span :class="{ 'hide': reSendEmailClicked }" id="btn"><p @click="sendEmail()">{{ $t("reSendEmail") }}</p></span>
-      <span 
-        :class="{ 'hide': !reSendEmailClicked }" 
-        class="fade-In" 
-        id="serverResponse"><p>Email Sent</p></span>
+      <span :class="{ hide: reSendEmailClicked }" id="btn"
+        ><p @click="sendEmail()">{{ $t("reSendEmail") }}</p></span
+      >
+      <span
+        :class="{ hide: !reSendEmailClicked }"
+        class="fade-In"
+        id="serverResponse"
+        >
+        <p v-if="serverResponse === 200" style="color: darkgreen">{{ $t("reSendEmail_emailSent") }}</p>
+        <p v-if="serverResponse === 400" style="color: darkgreen">{{ $t("reSendEmail_alreadyVerified") }}</p>
+        <p v-if="serverResponse === 404">{{ $t("reSendEmail_userNotMatch") }}</p>
+        <p v-if="serverResponse === 503">{{ $t("reSendEmail_serverError") }}</p>
+        </span
+      >
     </div>
   </div>
 </template>
   
   <script>
-import { useI18n } from "vue-i18n";
+// import { useI18n } from "vue-i18n";
 import { replace_newLine_to_br_tags } from "@/libft/libft.js";
-import {ref} from 'vue'
+import { ref } from "vue";
 export default {
   name: "RegisterErrorEmailVerif",
   props: {
@@ -37,67 +46,61 @@ export default {
   },
 
   setup(props) {
-    const { t } = useI18n();
-    // Utilisation de la fonction de traduction
-    const errorTitle = t("errorTitle");
-    const emailNotVerifiedText = t("emailNotVerifiedText");
-    const reSendEmail = t("reSendEmail");
 
     const reSendEmailClicked = ref(false);
+    const serverResponse = ref(null);
+
     async function sendEmail() {
       console.log("reSendEmail function ", props.username);
       reSendEmailClicked.value = true;
-      // const formData = {
-      //   username: props.username
-      // };
-      // try {
-      //   // Envoyer les données du formulaire au backend Node.js
-      //   const response = await fetch("/reSendEmail", {
-      //     method: "POST",
-      //     headers: {
-      //       "Content-Type": "application/json",
-      //     },
-      //     body: JSON.stringify(formData),
-      //   });
-      //   const responseData = await response.json();
-      //   console.log(responseData);
-      //   // switch (response.status) {
-      //   //   case 200:
-
-      //   //     break;
-      //   //   case 400:
-
-      //   //     break;
-      //   //   case 404:
-
-      //   //     break;
-      //   //   case 503:
-
-      //   //     break;
-      //   // }
-      // } catch (error) {
-      //   console.error("Error reSendEmail:", error);
-      // }
+      const formData = {
+        username: props.username,
+      };
+      try {
+     
+        const response = await fetch("/reSendEmail", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify(formData),
+        });
+        const responseData = await response.json();
+        console.log(responseData);
+        reSendEmailClicked.value = true;
+        switch (response.status) {
+          case 200:
+            serverResponse.value = 200;
+            break;
+          case 400:
+            serverResponse.value = 400;
+            break;
+          case 404:
+            serverResponse.value = 404;
+            break;
+          case 503:
+            serverResponse.value = 503;
+            break;
+        }
+      } catch (error) {
+        console.error("Error reSendEmail:", error);
+      }
     }
- 
     return {
-      errorTitle,
-      emailNotVerifiedText,
-      reSendEmail,
+      // i18n,
+      serverResponse,
       replace_newLine_to_br_tags,
       sendEmail,
       reSendEmailClicked,
-     
     };
   },
-  
 };
 </script>
   
   <style lang=scss>
 .login--error--email--container {
   position: relative;
-  height: auto;
+  min-height: 170px;
   width: auto;
   max-width: 600px;
   margin: 25px;
@@ -161,7 +164,7 @@ export default {
       justify-content: center;
       p {
         width: fit-content;
-        margin: 0px;
+        margin: 10px 0 0 0;
         text-align: center;
         color: var(--dark-gray);
         font-style: italic;
@@ -183,10 +186,11 @@ export default {
       justify-content: center;
       p {
         width: fit-content;
-        margin: 0px;
+        margin: 10px 0 0px 0;
+        // padding: 0 15px 0 15px;
         font-weight: 900;
         text-align: center;
-        color: green;
+        color: rgb(251, 122, 0);
         transition: all 0.1s;
       }
     }

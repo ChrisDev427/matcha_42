@@ -24,7 +24,7 @@
 </template>
 
 <script>
-import { useI18n } from "vue-i18n";
+
 import { ref, watch } from "vue";
 import { useStore } from "vuex";
 import LoginSuccess from "@/components/forms/LoginSuccess.vue";
@@ -46,16 +46,7 @@ export default {
   setup() {
 
     const store = useStore();
-    store.commit('setServerMessage', 'emailNotVerif');
-    store.commit('setIsLoginFormSent', true);
     const maxLength = 15;
-
-    // Traduction
-    const { t } = useI18n();
-    const forgotPassword = t("forgotPassword");
-    const userName = t("userName");
-    const password = t("password");
-    const connect = t("connect");
     // inputs
     let inputs = ref({
       username: "",
@@ -90,10 +81,7 @@ export default {
     }
 
     return {
-      forgotPassword,
-      userName,
-      password,
-      connect,
+    
       maxLength,
       inputs,
       submitForm,

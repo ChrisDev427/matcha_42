@@ -20,7 +20,7 @@ require('dotenv').config();
 
 
 //static files
-
+app.use('/assets', express.static('../frontend/dist/src'));
 // //middleware
 app.use(express.urlencoded({ extended: false }));
 app.use(express.json());
@@ -42,7 +42,7 @@ app.post('/login-form', require('./utils/loginUser'), (req, res) => {});
 
 app.post('/register-form', require('./utils/createUser'), (req, res) => {});
 
-app.get('/#/VerifyEmailPage', require('./utils/verifyEmail'), (req, res) => {});
+app.get('/verifyEmail', require('./utils/verifyEmail'), (req, res) => {});
 
 app.post('/updateUser', verifyToken, upload.array('photos'), require('./utils/updateUser'), (req, res) => {});
 

@@ -8,7 +8,7 @@
 </template>
 
 <script>
-import { useI18n } from "vue-i18n";
+
 import { replace_newLine_to_br_tags } from "@/libft/libft.js";
 import { useStore } from "vuex";
 
@@ -18,10 +18,6 @@ export default {
   name: "LoginSuccess",
 
   setup() {
-    const { t } = useI18n();
-
-    const loginSuccessText = t("loginSuccessText");
-    const hello = t("hello");
 
     const store = useStore();
     const router = useRouter();
@@ -37,8 +33,7 @@ export default {
 
     onMounted(goToMainPage);
     return {
-      loginSuccessText,
-      hello,
+     
       replace_newLine_to_br_tags,
       goToMainPage,
     };

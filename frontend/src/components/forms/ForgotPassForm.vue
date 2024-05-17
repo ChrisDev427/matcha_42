@@ -12,7 +12,7 @@
 </template>
 
 <script>
-import { useI18n } from "vue-i18n";
+
 import { ref, watch } from 'vue';
 import { validateEmail } from "../../libft/libft.js";
 
@@ -20,12 +20,6 @@ export default {
     name: "ForgotPassForm",
 
     setup() {
-        
-        // Traduction ----------------------------------
-        const { t } = useI18n();
-        const send = t("send");
-        const resetPassword = t("resetPassword");
-        const resetPasswordInfo = t("resetPasswordInfo");
 
         let inputs = ref({
 
@@ -47,9 +41,6 @@ export default {
 
         return {
 
-            send,
-            resetPassword,
-            resetPasswordInfo,
             validateEmail,
             inputs,
         };
