@@ -1,9 +1,6 @@
 <template>
   <div class="disconnect-btn" @click="logout()">
     <span><i class="fa-solid fa-right-from-bracket"></i></span>
-
-    <!-- <span><i class="fi fi-bs-sign-out-alt"></i></span> -->
-    <!-- <span>{{ $t("connect") }}</span> -->
   </div>
 </template>
 
@@ -25,7 +22,9 @@ export default {
         store.commit("setIsConnected", false);
         store.commit("setUserName", "");
         localStorage.clear();
-        store.getters.getWebSocket.close();
+        if (store.getters.getWebSocket) {
+          store.getters.getWebSocket.close();
+        }
         router.push({ name: "HomePage" });
         store.commit("setIsLoading", false);
       }, 3000);
@@ -49,31 +48,32 @@ export default {
     display: grid;
     align-items: center;
     justify-content: center;
-    width: 80px;
-    height: 40px;
+    width: 60px;
+    height: 35px;
     border-radius: 6px;
     background-image: linear-gradient(to right, #ff24a7, #8890fe);
     cursor: pointer;
     user-select: none;
     opacity: 1;
-    transition: all 0.3s;
-    font-size: 1.8rem;
+    transition: all 0.2s;
+    font-size: 1.6rem;
     color: white;
     margin-top: 1px;
 
     &:hover {
-      opacity: 0.8;
-      transform: scale(1.1);
+      
+      background-image: linear-gradient(to right, #ff24a796, #8890fe8e);
+      box-shadow: 0 0 8px #0000008c;
     }
   }
 
   @media (min-width: 200px) and (max-width: 700px) {
-    margin: 10px 10px 0px 10px;
+    margin: 5px 10px 0px 10px;
 
     span {
-      width: 50px;
-      height: 40px;
-      font-size: 1.6rem;
+      width: 35px;
+      height: 25px;
+      font-size: 1.2rem;
     }
   }
 }

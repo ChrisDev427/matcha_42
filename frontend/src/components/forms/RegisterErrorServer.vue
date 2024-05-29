@@ -7,12 +7,9 @@
         v-html="replace_newLine_to_br_tags($t('serverErrorText'))"
       ></p>
     </div>
-    <div class="return--btn" :to="{ name: 'RegisterPage', params: {} }">
+    <div class="return--btn">
       <span
-          @click="
-            $store.commit('setIsRegisterFormSent', false),
-              $store.commit('setServerMessage', '')
-          "
+          @click="goToRegisterPage"
         ><i
           class="fa-solid fa-circle-arrow-left"
         ></i
@@ -27,6 +24,14 @@ import { replace_newLine_to_br_tags } from "@/libft/libft.js";
 
 export default {
   name: "RegisterErrorServer",
+
+  methods: {
+    goToRegisterPage() {
+      this.$store.commit('setIsRegisterFormSent', false);
+      this.$store.commit('setServerMessage', '');
+      this.$router.push({ name: 'RegisterPage' });
+    }
+  },
 
   setup() {
    

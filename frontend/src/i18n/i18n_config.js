@@ -58,8 +58,22 @@ export const i18n = createI18n({
       reSendEmail_serverError: 'Server error, try again later...',
 
       forgotPassword: 'Forgot password ?',
+      forgotPasswordEmaiSentSuccess: 'An email has been sent,\
+      Please check your mailbox to change your password.',
+      forgotPasswordEmaiSentFail: 'Email not match with any account,\
+      Please enter the address you used when creating the account.',
+
+
       resetPassword: 'reset password',
       resetPasswordInfo: 'Enter the email address you used when creating the account :',
+      resetPasswordBtn: 'Reset Password',
+      changeEmailBtn: 'Change Email',
+
+      changeEmailTitle: 'Please enter your new email address.',
+      changeEmailSuccess: 'Your email address has been successfully changed. \n \
+      You will be logged out and will need to verify your new email address to continue using your account.',
+
+
       connect: 'Connect',
       disconnect: 'Log out',
       contactUs: 'To Contact Us',
@@ -105,8 +119,19 @@ export const i18n = createI18n({
       
 
       forgotPassword: 'Mot de passe oublié ?',
+      forgotPasswordEmaiSentSuccess: 'Un email a été envoyé,\
+      Merci de vérifier votre boîte mail pour changer votre mot de passe.',
+      forgotPasswordEmaiSentFail: 'L\'e-mail ne correspond à aucun compte.\
+      Veuillez saisir l\'adresse que vous avez utilisée lors de la création du compte.',
+
+
       resetPassword: 'reinitialiser le mot de passe',
       resetPasswordInfo: 'Saisissez l’adresse e‑mail que vous avez utilisé lors de la création du compte :',
+      resetPasswordBtn: 'Changer mot de passe',
+      changeEmailBtn: 'Changer Email',
+      changeEmailTitle: 'Veuillez entrer votre nouvelle adresse e-mail.',
+      changeEmailSuccess: 'Votre adresse email a été modifiée avec succès.\n \
+                          Vous serez déconnecté(e) et devrez vérifier votre nouvelle adresse email pour continuer à utiliser votre compte.',
       connect: 'Connexion',
       disconnect: 'Déonnexion',
       contactUs: 'Nous Contacter',

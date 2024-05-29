@@ -41,12 +41,12 @@ export default {
   width: auto;
 
   span {
-    color: white;
+    // color: white;
 
     p {
       cursor: pointer;
       color: white;
-      font-size: 1.5rem;
+      font-size: 1.3rem;
       font-weight: 600;
       transition: ease-in-out 0.2s;
 
@@ -63,23 +63,23 @@ export default {
     cursor: default;
     user-select: none;
     color: white;
-    font-size: 1.8rem;
+    font-size: 1.6rem;
     font-weight: 600;
   }
 }
 
 @media (min-width: 200px) and (max-width: 700px) {
   .language-selector {
-    margin: 0px 10px 0 10px;
+    margin: 0px 10px -10px 10px;
 
     span {
       p {
-        font-size: 1.3rem;
+        font-size: 1.1rem;
       }
     }
 
     p {
-      font-size: 1.3rem;
+      font-size: 1.1rem;
     }
   }
 }

@@ -9,10 +9,7 @@
     </div>
     <div class="return--btn" :to="{ name: 'LoginPage', params: {} }">
       <span
-        @click="
-          $store.commit('setIsLoginFormSent', false);
-          $store.commit('setServerMessage', '');
-        "
+        @click="goToLoginPage"
         ><i class="fa-solid fa-circle-arrow-left"></i
       ></span>
     </div>
@@ -25,6 +22,14 @@ import { replace_newLine_to_br_tags } from "@/libft/libft.js";
 
 export default {
   name: "RegisterErrorPassword",
+
+  methods: {
+    goToLoginPage() {
+      this.$store.commit('setIsLoginFormSent', false);
+      this.$store.commit('setServerMessage', '');
+      this.$router.push({ name: 'LoginPage' });
+    }
+  },
 
   setup() {
    

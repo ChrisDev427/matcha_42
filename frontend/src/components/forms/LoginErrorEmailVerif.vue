@@ -1,5 +1,6 @@
 <template>
   <div class="login--error--email--container fade-In">
+    
     <div class="text">
       <h3>{{ $t("errorTitle") }}</h3>
       <p
@@ -7,19 +8,18 @@
         v-html="replace_newLine_to_br_tags($t('emailNotVerifiedText'))"
       ></p>
     </div>
-    <div class="return--btn" :to="{ name: 'LoginPage', params: {} }">
+    <div class="return--btn">
       <span
-        @click="
-          $store.commit('setIsLoginFormSent', false);
-          $store.commit('setServerMessage', '');
-        "
+        @click="goToLoginPage"
         ><i class="fa-solid fa-circle-arrow-left"></i
       ></span>
     </div>
     <div class="send--email--verif">
-      <span :class="{ hide: reSendEmailClicked }" id="btn"
-        ><p @click="sendEmail()">{{ $t("reSendEmail") }}</p></span
-      >
+      
+      <TextButton :class="{ hide: reSendEmailClicked }" :btnName="$t('reSendEmail')" @click="sendEmail()"></TextButton>
+      
+      <div :class="{ spinner: reSendEmailClicked && !serverResponse}"></div>
+
       <span
         :class="{ hide: !reSendEmailClicked }"
         class="fade-In"
@@ -39,10 +39,23 @@
 // import { useI18n } from "vue-i18n";
 import { replace_newLine_to_br_tags } from "@/libft/libft.js";
 import { ref } from "vue";
+import TextButton from '@/components/TextButton.vue';
+
 export default {
   name: "RegisterErrorEmailVerif",
+  components: {
+    TextButton,
+  },
   props: {
     username: String,
+  },
+
+  methods: {
+    goToLoginPage() {
+      this.$store.commit('setIsLoginFormSent', false);
+      this.$store.commit('setServerMessage', '');
+      this.$router.push({ name: 'LoginPage' });
+    }
   },
 
   setup(props) {
@@ -67,7 +80,7 @@ export default {
         });
         const responseData = await response.json();
         console.log(responseData);
-        reSendEmailClicked.value = true;
+        // reSendEmailClicked.value = true;
         switch (response.status) {
           case 200:
             serverResponse.value = 200;
@@ -158,28 +171,28 @@ export default {
   }
 
   .send--email--verif {
-    margin: 0 auto 15px auto;
-    #btn {
+    // margin: 0 auto 15px auto;
       display: grid;
       justify-content: center;
-      p {
-        width: fit-content;
-        margin: 10px 0 0 0;
-        text-align: center;
-        color: var(--dark-gray);
-        font-style: italic;
-        transition: all 0.1s;
-        cursor: pointer;
+    // #btn {
+    //   p {
+    //     width: fit-content;
+    //     margin: 10px 0 0 0;
+    //     text-align: center;
+    //     color: var(--dark-gray);
+    //     font-style: italic;
+    //     transition: all 0.1s;
+    //     cursor: pointer;
 
-        &:hover {
-          text-decoration-line: underline;
-          font-style: normal;
-          color: white;
-          font-weight: 700;
-          transform: scale(1.05);
-        }
-      }
-    }
+    //     &:hover {
+    //       text-decoration-line: underline;
+    //       font-style: normal;
+    //       color: white;
+    //       font-weight: 700;
+    //       transform: scale(1.05);
+    //     }
+    //   }
+    // }
 
     #serverResponse {
       display: grid;

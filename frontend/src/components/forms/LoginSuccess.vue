@@ -28,7 +28,7 @@ export default {
         store.commit('setIsLoginFormSent', false);
         store.commit('setServerMessage', '');
         router.push({ name: 'MainPage' });
-      }, 3000)
+      }, 4000)
     }
 
     onMounted(goToMainPage);
@@ -46,7 +46,8 @@ export default {
   height: auto;
   width: auto;
   max-width: 500px;
-  margin: 25px;
+  margin: 0 25px 0 25px;
+  padding: 25px;
   border-radius: 15px;
   background-image: linear-gradient(to right, #ff24a7af, #8890feb2);
   box-shadow: 0 0 28px rgba(0, 0, 0, 0.498);
@@ -55,7 +56,8 @@ export default {
 
   .text {
     h1 {
-      padding: 25px 10px 0px 10px;
+      // padding: 25px 10px 0px 10px;
+      margin: 0;
       color: white;
       text-align: center;
       font-weight: 900;
@@ -66,13 +68,13 @@ export default {
 
     h3 {
       // border: solid 1px red;
-      margin: -10px 0 0 0;
+      margin: 0;
       padding: 0px 15px 25px 15px;
       color: white;
       text-align: center;
-      font-weight: 900;
+      font-weight: 600;
       text-transform: capitalize;
-      font-size: calc(min(2.5vw + 1.5vh, 40px));
+      font-size: calc(min(1.5vw + 1vh, 40px));
       text-shadow: 0 0 18px rgba(255, 255, 255, 0.438);
     }
   }

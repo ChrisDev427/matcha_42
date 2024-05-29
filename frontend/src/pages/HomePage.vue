@@ -3,14 +3,11 @@
     <template v-if="!$store.getters.getIsConnected">
       <div class="home">
         <div class="main--title fade-In">
-          <h1>swipe right,</h1>
-          <h1>match,</h1>
-          <h1 id="date">date !</h1>
+          <h1 class="title--line--1">swipe right,</h1>
+          <h1 class="title--line--2">match,</h1>
+          <h1 class="title--line--3" id="date">date !</h1>
         </div>
-        <router-link
-          class="create--account--btn"
-          :to="{ name: 'RegisterPage', params: {} }"
-        >
+        <router-link class="create--account--btn" :to="{ name: 'RegisterPage', params: {} }">
           <span>{{ $t("accountCreate_btn") }}</span>
         </router-link>
       </div>
@@ -32,7 +29,7 @@ export default {
     MainPage,
   },
 
-  
+
 
   setup() {
     const { t } = useI18n();
@@ -46,6 +43,40 @@ export default {
 
 
 <style lang="scss" scoped>
+@keyframes slide-from-left {
+  0% {
+    transform: translateX(-150%);
+    opacity: 0;
+  }
+
+  100% {
+    transform: translateX(0);
+    opacity: 1;
+  }
+}
+@keyframes slide-from-right {
+  0% {
+    transform: translateX(150%);
+    opacity: 0;
+  }
+
+  100% {
+    transform: translateX(0);
+    opacity: 1;
+  }
+}
+@keyframes slide-from-bottom {
+  0% {
+    transform: translateY(250%);
+    opacity: 0;
+  }
+
+  100% {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
+
 .home {
   display: grid;
   align-items: center;
@@ -58,6 +89,7 @@ export default {
     cursor: default;
     height: fit-content;
     margin-top: 50px;
+
     h1 {
       display: grid;
       justify-content: center;
@@ -66,12 +98,24 @@ export default {
       font-size: calc(min(5vw + 4.5vh, 150px));
       font-weight: 500;
       margin: 15px;
+
+      &.title--line--1 {
+        animation: slide-from-left 1s forwards;
+      }
+      &.title--line--2 {
+        animation: slide-from-right 1.2s forwards;
+      }
+      &.title--line--3 {
+        animation: slide-from-bottom 1.3s forwards;
+      }
+
     }
 
     #date {
       font-weight: 900;
       text-transform: uppercase;
     }
+
     @media (min-width: 200px) and (max-width: 700px) {
       margin-top: 100px;
     }
@@ -82,6 +126,7 @@ export default {
     text-decoration: none;
     height: fit-content;
     z-index: 1200;
+
     span {
       display: flex;
       align-items: center;

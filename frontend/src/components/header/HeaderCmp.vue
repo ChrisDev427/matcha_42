@@ -1,19 +1,17 @@
 <template>
-  <div
-    class="header"
-    :style="{ opacity: headerOpacity }"
-    :class="{ 'hidden-element': headerOpacity === 0 }"
-  >
-    <TitleCmp></TitleCmp>
+  <div class="container" :style="{ opacity: headerOpacity }" :class="{ 'hidden-element': headerOpacity === 0 }">
 
-    <div class="buttons--container">
-      <div class="buttons">
-        <LangSelectBtn></LangSelectBtn>
+    <div class="header">
+      <TitleCmp></TitleCmp>
 
-        <ProfileBtn v-if="$store.getters.getIsConnected"></ProfileBtn>
+      <div class="buttons--container">
+        <div class="buttons">
+          <LangSelectBtn></LangSelectBtn>
 
-        <ConnectBtn v-if="!$store.getters.getIsConnected"></ConnectBtn>
-        <DisconnectBtn v-if="$store.getters.getIsConnected"></DisconnectBtn>
+          <ProfileBtn v-if="$store.getters.getIsConnected"></ProfileBtn>
+          <ConnectBtn v-if="!$store.getters.getIsConnected"></ConnectBtn>
+          <DisconnectBtn v-if="$store.getters.getIsConnected"></DisconnectBtn>
+        </div>
       </div>
     </div>
   </div>
@@ -72,45 +70,61 @@ export default {
 </script>
 
 <style lang=scss>
-.header {
+.container {
   position: fixed;
   z-index: 1000;
   width: 100%;
-  height: 200px;
-  margin: 0px;
-  display: flex;
-  align-items: top;
-  justify-content: space-between;
-  z-index: 1100;
-  /* Ajoutez le dégradé noir transparent */
-  background-image: linear-gradient(
-    to bottom,
-    rgb(0, 0, 0) 5%,
-    rgba(0, 0, 0, 0)
-  );
+  height: 100px;
 
-  .buttons--container {
+  background-image: linear-gradient(to bottom,
+      rgb(0, 0, 0) 5%,
+      rgba(0, 0, 0, 0));
+
+  .header {
+    position: fixed;
+
+    width: 100%;
+    max-width: 1600px;
+    height: 100px;
+    left: 0;
+    right: 0;
+    margin: 0 auto;
+    box-sizing: border-box;
     display: flex;
     align-items: top;
-    margin-top: 15px;
+    justify-content: space-between;
 
-    .buttons {
+    z-index: 1100;
+    /* Ajoutez le dégradé noir transparent */
+    // background-image: linear-gradient(
+    //   to bottom,
+    //   rgb(0, 0, 0) 5%,
+    //   rgba(0, 0, 0, 0)
+    //   );
+
+    .buttons--container {
       display: flex;
-      align-items: center;
-      justify-content: space-between;
-      margin-right: 10px;
-      height: fit-content;
-      width: auto;
-    }
-
-    @media (min-width: 200px) and (max-width: 700px) {
       align-items: top;
+      margin-top: 15px;
 
       .buttons {
-        margin-right: 10px;
-        margin-top: 0px;
-        display: grid;
+        display: flex;
         align-items: center;
+        justify-content: space-between;
+        margin-right: 10px;
+        height: fit-content;
+        width: auto;
+      }
+
+      @media (max-width: 700px) {
+        align-items: top;
+
+        .buttons {
+          margin-right: 10px;
+          margin-top: 0px;
+          display: grid;
+          align-items: center;
+        }
       }
     }
   }

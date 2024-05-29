@@ -7,17 +7,14 @@
         v-html="replace_newLine_to_br_tags($t('accountCreatedText'))"
       ></p>
     </div>
-    <router-link class="login--btn" :to="{ name: 'LoginPage', params: {} }">
+    <div class="login--btn">
       <span
-          @click="
-            $store.commit('setServerMessage', ''),
-            $store.commit('setIsRegisterFormSent', false)
-          "
+          @click="goToLoginPage"
         ><i
           class="fa-solid fa-right-to-bracket"
         ></i
       ></span>
-    </router-link>
+    </div>
   </div>
 </template>
 
@@ -26,6 +23,14 @@ import { replace_newLine_to_br_tags } from "@/libft/libft.js";
 
 export default {
   name: "RegisterSuccess",
+
+  methods: {
+    goToLoginPage() {
+      this.$store.commit('setIsRegisterFormSent', false);
+      this.$store.commit('setServerMessage', '');
+      this.$router.push({ name: 'LoginPage' });
+    }
+  },
 
   setup() {
    

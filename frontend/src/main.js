@@ -9,6 +9,8 @@ import '@fortawesome/fontawesome-free/css/all.css'
 import '@fortawesome/fontawesome-free/js/all.js'
 import "@flaticon/flaticon-uicons/css/all/all.css";
 
+// import '@vue-multiselect/dist/vue-multiselect.min.css';
+import '../../frontend/node_modules/vue-multiselect/dist/vue-multiselect.css'
 
 const VueApp = createApp(App);
 

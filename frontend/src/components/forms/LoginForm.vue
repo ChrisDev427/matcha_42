@@ -8,10 +8,8 @@
         <button :class="{ 'disabled--btn': !isFormValid }" :disabled="!isFormValid">
           {{ $t("connect") }}
         </button>
-        <router-link class="forgot--password" :to="{ name: 'ForgotPassPage', params: {} }">
-          <span>
-            <p>{{ $t("forgotPassword") }}</p>
-          </span>
+        <router-link class="router--btn" :to="{ name: 'ForgotPassPage', params: {} }">
+          <TextButton :btnName="$t('forgotPassword')"></TextButton>
         </router-link>
       </form>
     </div>
@@ -32,6 +30,7 @@ import LoginErrorServer from "@/components/forms/LoginErrorServer.vue";
 import LoginFail from "@/components/forms/LoginFail.vue";
 import LoginErrorPassword from "@/components/forms/LoginErrorPassword.vue";
 import LoginErrorEmailVerif from "@/components/forms/LoginErrorEmailVerif.vue";
+import TextButton from '@/components/TextButton.vue';
 
 export default {
   name: "LoginForm",
@@ -41,11 +40,13 @@ export default {
     LoginFail,
     LoginErrorPassword,
     LoginErrorEmailVerif,
+    TextButton,
   },
 
   setup() {
 
     const store = useStore();
+    // store.commit('setServerMessage', 'success');
     const maxLength = 15;
     // inputs
     let inputs = ref({
@@ -65,14 +66,13 @@ export default {
 
     function submitForm(event) {
       event.preventDefault();
-      
+      store.commit('setIsLoading', true);
       // Récupérer les données du formulaire
       const formData = {
         username: event.target.username.value,
         password: event.target.password.value
       };
-      store.commit('setIsLoading', true);
-      console.log('CCCCC');
+      
       setTimeout(() => {
        
         store.dispatch('submitLoginForm', formData);
@@ -175,6 +175,10 @@ export default {
         transform: scale(1.1);
       }
     }
+    .router--btn {
+      text-decoration: none;
+      margin: 15px 0 0 0;
+    }
 
     .disabled--btn {
       opacity: 0.6;
@@ -184,34 +188,6 @@ export default {
         background-image: linear-gradient(to right, #ff24a7af, #8890feb2);
         color: white;
         transform: none;
-      }
-    }
-
-    // }
-
-    .forgot--password {
-      text-decoration: none;
-      padding-top: 15px;
-      margin-top: 15px;
-      padding: 0;
-
-      span {
-        p {
-          margin: 0px;
-          text-align: center;
-          color: var(--dark-gray);
-          font-style: italic;
-          transition: all 0.1s;
-          cursor: pointer;
-
-          &:hover {
-            text-decoration-line: underline;
-            font-style: normal;
-            color: white;
-            font-weight: 700;
-            transform: scale(1.0.5);
-          }
-        }
       }
     }
   }

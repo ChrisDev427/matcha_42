@@ -62,22 +62,6 @@ export default {
 
       });
 
-      // function initWebSocket() {
-
-      //   const ws = new WebSocket('ws://localhost:8080/?id=' + localStorage.getItem('userId'));
-      //   ws.onopen = function () {
-      //     console.log('Connection is open ...');
-      //     let message = JSON.stringify({ type: 'test', userId: '', message: 'Hello Server!' });
-      //     ws.send(message);
-      //   };
-      //   ws.onmessage = function (messageEvent) {
-      //     console.log('Server says: ' + messageEvent.data);
-      //   };
-      //   ws.onclose = function () {
-      //     console.log('Connection is closed.');
-      //   };
-      // }
-
       async function checkAccessToken() {
         console.log('check Token');
 
@@ -90,19 +74,17 @@ export default {
           });
           const responseData = await response.json();
           if (response.status === 200) {
-            console.log('check Token 200');
 
             if (responseData.accessToken) {
               localStorage.setItem('accessToken', responseData.accessToken)
               console.log('ACCESS Token');
 
             }
-            // initWebSocket();
-            store.dispatch('initWebSocket');
-
+          
+            await store.dispatch('initWebSocket');
+            await store.dispatch('getUserInfos', localStorage.getItem('userName'));
             store.commit('setIsReady', true);
             store.commit('setIsConnected', true);
-            console.log('check');
 
           } else if (response.status >= 400) {
 
@@ -112,7 +94,7 @@ export default {
         } catch (error) {
           console.error('Erreur lors de la récupération du profil :', error);
           store.commit('setIsReady', true);
-          store.commit('setIsConnected', false);
+          store.commit('setIsConnected', true);
         }
       }
   }
@@ -142,70 +124,6 @@ export default {
   height: 100vh;
 }
 
-// .fade-blur-bg {
-//   position: fixed;
-//   top: 0;
-//   left: 0;
-//   width: 100%;
-//   height: 100%;
-//   z-index: 1300;
-//   /* Assurez-vous que le conteneur de flou est au-dessus du reste du contenu */
-//   // opacity: 0.5;
-//   // background-color: rgba(0, 0, 0, 0.638);
-//   animation: fadeBlur 0.3s ease-in-out forwards;
-// }
-
-// @keyframes fadeBlur {
-//   0% {
-//     filter: blur(0px);
-//     backdrop-filter: blur(0px);
-//   }
-
-//   100% {
-//     filter: blur(4px);
-//     backdrop-filter: blur(4px);
-//   }
-// }
-
-// .overlay {
-//   position: absolute;
-//   top: 0;
-//   left: 0;
-//   width: 100%;
-//   height: 100%;
-//   background-color: rgba(0, 0, 0, 0.6);
-//   /* Couleur de fond semi-transparente */
-// }
-
-// .centered-content {
-//   position: absolute;
-//   top: 50%;
-//   left: 50%;
-//   transform: translate(-50%, -50%);
-//   z-index: 1800;
-//   /* Assurez-vous que le conteneur de flou est au-dessus du reste du contenu */
-// }
-
-// .animated-image {
-//   width: 60px;
-//   /* Ajustez la taille de votre image selon vos besoins */
-//   height: 60px;
-//   /* Ajustez la taille de votre image selon vos besoins */
-//   animation: scaleAnimation 0.5s infinite alternate;
-//   /* Animation de 3 secondes, infinie et alternée */
-//   z-index: 100;
-// }
-
-// @keyframes scaleAnimation {
-//   0% {
-//     transform: scale(1);
-//   }
-
-//   100% {
-//     transform: scale(1.2);
-//     /* Ajustez le facteur d'échelle selon vos besoins */
-//   }
-// }
 
 .hidden-element {
   display: none !important;
@@ -231,5 +149,28 @@ export default {
 
 .text-green {
   color: rgb(64, 169, 64) !important;
+}
+
+.spinner {
+  
+  width: 25px;
+  height: 25px;
+  margin: auto;
+  border: 6px solid rgba(0, 0, 0, 0.1);
+  border-top: 6px solid #f25dff;
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+  
+  @keyframes spin {
+    0% {
+      transform: rotate(0deg);
+    }
+    100% {
+      transform: rotate(360deg);
+    }
+  }
+}
+.no-scroll {
+    overflow: hidden;
 }
 </style>
