@@ -9,7 +9,7 @@ async function verifyEmail(req, res){
 	}
 	const user = await User.findOne({ refreshToken: tokenEmail });
 	if (!user) {
-		return res.status(404).json({ message: "token not match" });
+		return res.status(404).json({ message: "token not match or already verified" });
 	}
 	user.verified = true;
 	user.tokenRefresh = null;

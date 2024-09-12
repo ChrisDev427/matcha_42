@@ -191,7 +191,7 @@ export default {
 async function submitForm() {
   try {
     await getLocation();
-    const response = await fetch("/submit-form", {
+    const response = await fetch("http://192.168.1.45:8081/submit-form", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
