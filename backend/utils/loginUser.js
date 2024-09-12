@@ -4,15 +4,15 @@ const User = require('../models/User');
 const connectBdd = require('./connectBdd');
 
 const JWT_SECRET = process.env.JWT_SECRET;
-const JWT_EXPIRES_IN = '15m';
+const JWT_EXPIRES_IN = '10s';
 const REFRESH_TOKEN_SECRET = process.env.REFRESH_TOKEN_SECRET;
 const REFRESH_TOKEN_EXPIRES_IN = '7d';
 
 async function loginUser(req, res) {
     try {
 		await connectBdd();
-        const { userName, password } = req.body;
-        const user = await User.findOne({ userName });
+        const { username, password } = req.body;
+        const user = await User.findOne({ username });
         if (!user) {
             return res.status(404).json({ message: "User not found" });
         }
@@ -52,10 +52,10 @@ async function loginUser(req, res) {
 		await user.save();
 
         // Envoyer les tokens au client
-        res.cookie('refreshToken', refreshToken, { httpOnly: true, secure: true, maxAge: 7 * 24 * 60 * 60 * 1000 }); // 7 jours en millisecondes
-        res.json({
+        res.cookie('refreshToken', refreshToken, { httpOnly: true, secure: false, maxAge: 7 * 24 * 60 * 60 * 1000 }); // 7 jours en millisecondes
+        res.status(201).json({
             message: "Connexion réussie",
-            accessToken,
+            accessToken : accessToken,
             user: {
                 id: user._id,
                 username: user.username,

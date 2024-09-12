@@ -5,10 +5,10 @@ const connectBdd = require('./connectBdd');
 async function reSendEmail(req, res){
 	try {
 		await connectBdd();
-		const { email } = req.body;
-        const user = await User.findOne({ email });
+		const { username } = req.body;
+        const user = await User.findOne({ username });
         if (!user) {
-            return res.status(404).json({ message: "email not match" });
+            return res.status(404).json({ message: "User not match" });
         }
 
 		if (user.verified) {

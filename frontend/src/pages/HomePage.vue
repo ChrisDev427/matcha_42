@@ -1,74 +1,81 @@
 <template>
-  <div class="home">
-    <div class="main--title fade-In" @onclick="fadeOutTitle">
-      <h1>swipe right,</h1>
-      <h1>match,</h1>
-      <h1 id="date">date !</h1>
-      <button class="button-test" @click="submitTest">submit</button>
-    </div>
-    <input type="file" id="fileInput" multiple @change="handleFileUpload" />
-    <button @click="submitPhotos">Upload Photos</button>
-    <router-link
-      class="create--account--btn"
-      :to="{ name: 'RegisterPage', params: {} }"
-    >
-      <span>{{ $t("accountCreate_btn") }}</span>
-    </router-link>
-  </div>
-
+  <section>
+    <template v-if="!$store.getters.getIsConnected">
+      <div class="home">
+        <div class="main--title fade-In">
+          <h1 class="title--line--1">swipe right,</h1>
+          <h1 class="title--line--2">match,</h1>
+          <h1 class="title--line--3" id="date">date !</h1>
+        </div>
+        <router-link class="create--account--btn" :to="{ name: 'RegisterPage', params: {} }">
+          <span>{{ $t("accountCreate_btn") }}</span>
+        </router-link>
+      </div>
+    </template>
+    <template v-if="$store.getters.getIsConnected">
+      <MainPage />
+    </template>
+  </section>
 </template>
 
 <script>
 import { useI18n } from "vue-i18n";
-import { onMounted, onUnmounted, ref } from "vue";
+import MainPage from "@/pages/MainPage.vue";
 
 export default {
   name: "HomePage",
 
+  components: {
+    MainPage,
+  },
+
+
+
   setup() {
     const { t } = useI18n();
     // Utilisation de la fonction de traduction
-    const accountCreate = t("accountCreate");
-    const selectedFiles = ref(null);
-    let ws;
+    const accountCreate_btn = t("accountCreate_btn");
 
     // Initialisation de WebSocket
     function initWebSocket() {
-      ws = new WebSocket('ws://localhost:8080/?id=66406489327b4f1c5543f281');
+          let ws = new WebSocket('ws://192.148.1.12:8081/?id=66406489327b4f1c5543f281');
 
-      ws.onopen = function() {
-    console.log('Connection is open ...');
-    let message = JSON.stringify({type: 'test', userId:'' , message: 'Hello Server!'});
-    ws.send(message);
-};
+          ws.onopen = function() {
+          console.log('Connection is open ...');
+          let message = JSON.stringify({type: 'test', userId:'' , message: 'Hello Server!'});
+          ws.send(message);
+          };
 
-ws.onmessage = function(messageEvent) {
-    console.log('Server says: ' + messageEvent.data);
-};
+          ws.onmessage = function(messageEvent) {
+              console.log('Server says: ' + messageEvent.data);
+          };
 
-ws.onclose = function() {
-    console.log('Connection is closed.');
-};
+          ws.onclose = function() {
+              console.log('Connection is closed.');
+          };
 
-}
+          ws.onerror = function(error) {
+              console.log('Error detected: ' + error);
+          };
+    }
 
     // Nettoyer et fermer la connexion WebSocket lors du démontage du composant
-    function cleanupWebSocket() {
+    function cleanupWebSocket(ws) {
       if (ws) {
         ws.close();
       }
     }
 
-    function submitTest() {
+    function submitTest(ws) {
       let message = JSON.stringify({type: 'like', userId:'66406489327b4f1c5543f281' , message: {user: 'Axesnake', userLiked: 'Axou'}});
       ws.send(message);
     }
 
-    function handleFileUpload(event) {
+    function handleFileUpload(event, selectedFiles) {
       selectedFiles.value = event.target.files;
     }
 
-    async function submitPhotos() {
+    async function submitPhotos(selectedFiles) {
   console.log("selectedFiles = ", selectedFiles.value);
   if (!selectedFiles.value) {
     alert("Please select files first.");
@@ -85,34 +92,67 @@ ws.onclose = function() {
     console.log(`${key}: ${value.name}`); // Assumant que 'value' est un fichier
   });
 
-  try {
-    const response = await fetch('/updateUser', {
-      method: 'POST',
-      body: formData,
-      // En-tête Content-Type doit être omis pour permettre au navigateur de le définir
-      headers: {
-        'Authorization': 'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiI2NjQxYmUwYmMyNjczNjYwN2NhZDg4NTciLCJlbWFpbCI6ImF4ZXNuYWtlQGhvdG1haWwuZnIiLCJpYXQiOjE3MTU1OTY4MTgsImV4cCI6MTcxNTU5NzcxOH0.F-yk4q2UVD5kiyu45t6GGnYHI4ooU4xcm7juW521LB0',
-      },
-    });
-    const result = await response.json();
-    console.log(result);
-  } catch (error) {
-    console.error('Error uploading files:', error);
-  }
+  // try {
+  //   const response = await fetch('/updateUser', {
+  //     method: 'POST',
+  //     body: formData,
+  //     // En-tête Content-Type doit être omis pour permettre au navigateur de le définir
+  //     headers: {
+  //       'Authorization': 'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiI2NjQxYmUwYmMyNjczNjYwN2NhZDg4NTciLCJlbWFpbCI6ImF4ZXNuYWtlQGhvdG1haWwuZnIiLCJpYXQiOjE3MTU1OTY4MTgsImV4cCI6MTcxNTU5NzcxOH0.F-yk4q2UVD5kiyu45t6GGnYHI4ooU4xcm7juW521LB0',
+  //     },
+  //   });
+  //   const result = await response.json();
+  //   console.log(result);
+  // } catch (error) {
+  //   console.error('Error uploading files:', error);
+  // }
 }
 
-    onMounted(initWebSocket);
-    onUnmounted(cleanupWebSocket);
+    // onMounted(initWebSocket);
+    // onUnmounted(cleanupWebSocket);
 
-    return { accountCreate, submitTest, handleFileUpload, submitPhotos };
+    return { submitTest, handleFileUpload, submitPhotos, accountCreate_btn, initWebSocket, cleanupWebSocket };
   },
 };
 </script>
 
 
 <style lang="scss" scoped>
-.home {
+@keyframes slide-from-left {
+  0% {
+    transform: translateX(-150%);
+    opacity: 0;
+  }
 
+  100% {
+    transform: translateX(0);
+    opacity: 1;
+  }
+}
+@keyframes slide-from-right {
+  0% {
+    transform: translateX(150%);
+    opacity: 0;
+  }
+
+  100% {
+    transform: translateX(0);
+    opacity: 1;
+  }
+}
+@keyframes slide-from-bottom {
+  0% {
+    transform: translateY(250%);
+    opacity: 0;
+  }
+
+  100% {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
+
+.home {
   display: grid;
   align-items: center;
   justify-content: center;
@@ -124,6 +164,7 @@ ws.onclose = function() {
     cursor: default;
     height: fit-content;
     margin-top: 50px;
+
     h1 {
       display: grid;
       justify-content: center;
@@ -132,16 +173,26 @@ ws.onclose = function() {
       font-size: calc(min(5vw + 4.5vh, 150px));
       font-weight: 500;
       margin: 15px;
+
+      &.title--line--1 {
+        animation: slide-from-left 1s forwards;
+      }
+      &.title--line--2 {
+        animation: slide-from-right 1.2s forwards;
+      }
+      &.title--line--3 {
+        animation: slide-from-bottom 1.3s forwards;
+      }
+
     }
 
     #date {
       font-weight: 900;
       text-transform: uppercase;
     }
+
     @media (min-width: 200px) and (max-width: 700px) {
       margin-top: 100px;
-
-
     }
   }
 
@@ -150,6 +201,7 @@ ws.onclose = function() {
     text-decoration: none;
     height: fit-content;
     z-index: 1200;
+
     span {
       display: flex;
       align-items: center;
@@ -165,14 +217,17 @@ ws.onclose = function() {
 
       font-size: 1.2rem;
       font-weight: 500;
-      transition: all 0.4s;
+      transition: all 0.3s;
+      opacity: 1;
       cursor: pointer;
 
       &:hover {
-        background-image: linear-gradient(to right, #ff24a78a, #8890fe90);
+        // background-image: linear-gradient(to right, #ff24a78a, #8890fe90);
         /* Dégradé de couleur */
-        color: rgb(107, 12, 138);
+        opacity: 0.8;
         transform: scale(1.15);
+        // color: black;
+        color: var(--light-pink);
       }
     }
   }

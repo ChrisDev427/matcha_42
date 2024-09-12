@@ -21,7 +21,8 @@ router.get('/verifyEmail', require('../utils/verifyEmail'), (req, res) => {});
 
 router.post('/updateUser', verifyToken, getLocationWithIp, upload.array('photos'), require('../utils/updateUser'), (req, res) => {});
 
-router.get('/profile/:username', verifyToken, getLocationWithIp, require('../utils/getUser'), (req, res) => {});
+// router.get('/profile/:username', verifyToken, getLocationWithIp, require('../utils/getUser'), (req, res) => {});
+router.get('/profile/:username', verifyToken, require('../utils/getUser'), (req, res) => {});
 
 router.get('/verifyToken', verifyToken, (req, res) => {
 	res.send({ message: "Token is valid" });

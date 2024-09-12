@@ -18,6 +18,7 @@ async function setupWebSocket(server) {
         console.log('A new client Connected!');
         const location = url.parse(req.url, true);
         const userId = location.query.id;
+        console.log('userId = ', userId);
 
         clients.set(userId, ws);
         ws.send(JSON.stringify({type: 'connected', userId: userId, message: 'You are connected'}));

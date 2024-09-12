@@ -1,45 +1,104 @@
 <template>
-  <div>
-    <Header></Header>
-    <router-view> </router-view>
-    <Footer></Footer>
+  <div class="fade-In">
+    <!-- <div class="fade-blur-bg">
+      <div class="overlay"></div>
+
+    </div>
+    <div class="centered-content">
+      <img src="../public/src/feu.png" alt="Your Image" class="animated-image" />
+    </div> -->
+    <LoadingStartApp v-if="$store.getters.getIsLoadingStartApp"></LoadingStartApp>
+    <LoadingCmp v-if="$store.getters.getIsLoading"></LoadingCmp>
+    <div v-if="$store.getters.getIsReady">
+
+        <Header></Header>
+        <router-view> </router-view>
+        <Footer></Footer>
+
+    </div>
   </div>
 </template>
 
 <script>
 import Header from "./components/header/HeaderCmp.vue";
 import Footer from "./components/footer/FooterCmp.vue";
+import LoadingStartApp from "./components/LoadingStartApp.vue";
+import LoadingCmp from "./components/LoadingCmp.vue";
+import { onMounted } from "vue";
 import { useStore } from "vuex";
-import { computed } from "vue";
+import { fetchData } from "./config/api"
+
+// import { useRouter } from 'vue-router';
+// import { useStore } from "vuex";
+// import { computed } from "vue";
+
 export default {
   name: "App",
   components: {
     Header,
     Footer,
+    LoadingStartApp,
+    LoadingCmp,
   },
-  
+
   setup() {
+
     const store = useStore();
-    const connectionState = computed(() => store.getters.getConnectionState);
-    const accessToken = computed(() => store.getters.getAccessToken);
-    const refreshToken = computed(() => store.getters.getRefreshToken);
+    onMounted(() => {
 
-    console.log('connectionState', connectionState.value);
+      store.commit('setIsLoadingStartApp', true);
+      setTimeout(() => {
+        if (localStorage.getItem('accessToken')) {
+          console.log('AAAAA');
+          checkAccessToken();
+          store.commit('setIsLoadingStartApp', false);
 
-    store.commit('setConnectionState', true);
-    
-    console.log('connectionState', connectionState.value);
+        } else {
+          console.log('BBBBB');
 
-    store.commit('setAccessToken', '12345678910');
-    store.commit('setRefreshToken', '109876543210')
-    
-    console.log('access token = ', accessToken.value);
-    console.log('refresh token = ', refreshToken.value);
+          store.commit('setIsReady', true);
+          store.commit('setIsLoadingStartApp', false);
+        }
+      }, 2000);
 
-    
+      });
 
-    
-  },
+      async function checkAccessToken() {
+        console.log('check Token');
+
+        try {
+          const response = await fetchData("/verifyToken", {
+            method: 'GET',
+            headers: {
+              'Authorization': 'Bearer ' + localStorage.getItem('accessToken')
+            }
+          });
+          const responseData = await response.json();
+          if (response.status === 200) {
+
+            if (responseData.accessToken) {
+              localStorage.setItem('accessToken', responseData.accessToken)
+              console.log('ACCESS Token');
+
+            }
+
+            await store.dispatch('initWebSocket');
+            await store.dispatch('getUserInfos', localStorage.getItem('userName'));
+            store.commit('setIsReady', true);
+            store.commit('setIsConnected', true);
+
+          } else if (response.status >= 400) {
+
+            store.commit('setIsReady', true);
+            store.commit('setIsConnected', false);
+          }
+        } catch (error) {
+          console.error('Erreur lors de la récupération du profil :', error);
+          store.commit('setIsReady', true);
+          store.commit('setIsConnected', false);
+        }
+      }
+  }
 };
 </script>
 
@@ -66,19 +125,6 @@ export default {
   height: 100vh;
 }
 
-.fade-blur-bg {
-  animation: fadeBlur 0.1s ease-in-out forwards;
-
-  @keyframes fadeBlur {
-    0% {
-      backdrop-filter: blur(0px);
-    }
-
-    100% {
-      backdrop-filter: blur(5px);
-    }
-  }
-}
 
 .hidden-element {
   display: none !important;
@@ -104,5 +150,28 @@ export default {
 
 .text-green {
   color: rgb(64, 169, 64) !important;
+}
+
+.spinner {
+
+  width: 25px;
+  height: 25px;
+  margin: auto;
+  border: 6px solid rgba(0, 0, 0, 0.1);
+  border-top: 6px solid #f25dff;
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+
+  @keyframes spin {
+    0% {
+      transform: rotate(0deg);
+    }
+    100% {
+      transform: rotate(360deg);
+    }
+  }
+}
+.no-scroll {
+    overflow: hidden;
 }
 </style>

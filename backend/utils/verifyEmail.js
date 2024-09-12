@@ -1,11 +1,15 @@
 const connectBdd = require('./connectBdd');
-
+const {renderHTML} = require('./sendEmailVerification');
 async function verifyEmail(req, res){
+	console.log('verifyEmail function')
+
 	await connectBdd();
 	const User = require('../models/User');
 	const tokenEmail = req.query.token;
 	if (!tokenEmail) {
-		return res.status(400).json({ message: "token is required" });
+		console.log('!tokenEmail')
+		let html = await renderHTML('emailVerified.twig', { success : false });
+		res.status(400).send(html);
 	}
 	const user = await User.findOne({ refreshToken: tokenEmail });
 	if (!user) {
@@ -14,7 +18,8 @@ async function verifyEmail(req, res){
 	user.verified = true;
 	user.tokenRefresh = null;
 	await user.save();
-	res.status(200).json({ message: "Email verified" });
+	let html = await renderHTML('emailVerified.twig', { success : true });
+	res.status(200).send(html);
 }
 
 module.exports = verifyEmail;

@@ -7,7 +7,6 @@ const { UUID } = require('mongodb');
 const path = require('path');
 const connectBdd = require('./connectBdd');
 
-
 class DuplicationError extends Error {
     constructor(message) {
         super(message);

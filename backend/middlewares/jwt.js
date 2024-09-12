@@ -9,12 +9,13 @@ const verifyToken = async (req, res, next) => {
   const authHeader = req.headers.authorization;
   // console.log('authHeader= ', authHeader);
   const refreshToken = req.cookies.refreshToken; // Supposons que le refresh token soit envoyé via cookies
-
+  console.log('req.cookies= ', req.cookies);
   if (authHeader) {
     const token = authHeader.split(' ')[1]; // Bearer <token>
     jwt.verify(token, JWT_SECRET, async (err, user) => {
       if (err) {
-        // console.log("refreshToken= ", refreshToken);
+        console.log("err= ", err.name);
+        console.log("refreshToken= ", refreshToken);
         if (err.name === "TokenExpiredError" && refreshToken) {
           // Vérifier le refresh token
           const decoded = jwt.verify(refreshToken, REFRESH_TOKEN_SECRET);
