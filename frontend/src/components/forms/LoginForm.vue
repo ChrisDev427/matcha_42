@@ -13,6 +13,12 @@
         </router-link>
       </form>
     </div>
+    <!-- Inclure le composant GeoLocation -->
+    <GeoLocation @location-updated="updateCoordinates" @location-error="handleLocationError" />
+    <!-- Afficher un message d'erreur si nécessaire -->
+    <div v-if="locationError" class="error-message">
+      <p>{{ locationError }}</p>
+    </div>
     <LoginSuccess v-if="$store.getters.getServerMessage === 'success'"></LoginSuccess>
     <LoginFail v-if="$store.getters.getServerMessage === 'loginFail'"></LoginFail>
     <LoginErrorPassword v-if="$store.getters.getServerMessage === 'wrongPassword'"></LoginErrorPassword>
@@ -31,6 +37,7 @@ import LoginFail from "@/components/forms/LoginFail.vue";
 import LoginErrorPassword from "@/components/forms/LoginErrorPassword.vue";
 import LoginErrorEmailVerif from "@/components/forms/LoginErrorEmailVerif.vue";
 import TextButton from '@/components/TextButton.vue';
+import GeoLocation from '@/components/Geolocation.vue';
 
 export default {
   name: "LoginForm",
@@ -41,6 +48,7 @@ export default {
     LoginErrorPassword,
     LoginErrorEmailVerif,
     TextButton,
+    GeoLocation
   },
 
   setup() {
@@ -53,7 +61,20 @@ export default {
       username: "",
       password: "",
     });
-   
+
+    const coordinates = ref(null);
+    const locationError = ref(null);
+
+    // Fonction pour mettre à jour les coordonnées lorsque l'événement est émis
+    function updateCoordinates(coords) {
+      coordinates.value = coords;
+    }
+
+    // Fonction pour gérer les erreurs de géolocalisation
+    function handleLocationError(error) {
+      locationError.value = error;
+    }
+
     watch(
       inputs,
       (newValue) => {
@@ -70,18 +91,19 @@ export default {
       // Récupérer les données du formulaire
       const formData = {
         username: event.target.username.value,
-        password: event.target.password.value
+        password: event.target.password.value,
+        location: coordinates.value,
       };
-      
+
       setTimeout(() => {
-       
+
         store.dispatch('submitLoginForm', formData);
         inputs.value.password = "";
       }, 1000);
     }
 
     return {
-    
+
       maxLength,
       inputs,
       submitForm,
@@ -90,6 +112,10 @@ export default {
       LoginErrorEmailVerif,
       LoginErrorPassword,
       LoginErrorServer,
+      TextButton,
+      updateCoordinates,
+      locationError,
+      handleLocationError
     };
   },
   computed: {

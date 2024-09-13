@@ -74,7 +74,7 @@ export const store = createStore({
     setIsLoading(state, value) { state.isLoading = value; },
     setIsLoadingStartApp(state, value) { state.isLoadingStartApp = value; },
     setIsConnected(state, value) { state.is_connected = value; },
-    setWebSocket(state, value) { state.ws = value; },
+    setWebSocket(state, ws) { state.ws = ws; },
     setIsLoginFormSent(state, value) { state.is_login_form_sent = value; },
     setIsRegisterFormSent(state, value) { state.is_register_form_sent = value; },
 
@@ -86,16 +86,18 @@ export const store = createStore({
   },
 
   actions: {
-    // closeWebSocket({state}) {
-    //   state.ws.close();
-    // },
+    closeWebSocket({state}) {
+      state.ws.close();
+    },
 
 
     initWebSocket({ commit, state }) {
+      const userId = localStorage.getItem("userId");
+      console.log ( "userId on websocket = ", userId);
       commit(
         "setWebSocket",
         new WebSocket(
-          "ws://localhost:8080/?id=" + localStorage.getItem("userId")
+          "ws://192.168.1.45:8081/?id=" + userId
         )
       );
 
@@ -103,13 +105,35 @@ export const store = createStore({
         console.log("Connection is open ...");
         let message = JSON.stringify({
           type: "test",
-          userId: "",
+          userId: userId,
           message: "Hello Server!",
         });
         state.ws.send(message);
       };
       state.ws.onmessage = function (messageEvent) {
-        console.log("Server says: " + messageEvent.data);
+        const data = JSON.parse(messageEvent.data);
+        console.log("Server says: " + data.type);
+        if (data.type === "pingLocation") {
+          // Obtenir la géolocalisation de l'utilisateur
+          navigator.geolocation.getCurrentPosition(
+            function (position) {
+              let location = {
+                latitude: position.coords.latitude,
+                longitude: position.coords.longitude,
+              };
+              let message = JSON.stringify({
+                type: "newLocation",
+                userId: localStorage.getItem("userId"),
+                location: location,
+              });
+              state.ws.send(message);
+              console.log("Envoyé newLocation :", message);
+            },
+            function (error) {
+              console.error("Erreur lors de la récupération de la position :", error);
+            }
+          );
+        }
       };
       state.ws.onclose = function () {
         console.log("Connection is closed.");
@@ -171,6 +195,7 @@ export const store = createStore({
         switch (response.status) {
           case 201:
             localStorage.setItem("accessToken", responseData.accessToken);
+            localStorage.setItem("refreshToken", responseData.refreshToken);
             localStorage.setItem("userId", responseData.user.id);
             localStorage.setItem("userName", responseData.user.username);
             commit("setUserName", localStorage.getItem("userName"));
@@ -213,7 +238,8 @@ export const store = createStore({
           method: "GET",
           headers: {
             "Content-Type": "application/json",
-            "authorization": "bearer " + localStorage.getItem('accessToken')
+            "authorization": "bearer " + localStorage.getItem('accessToken'),
+            "refreshToken": localStorage.getItem('refreshToken'),
           },
 
 

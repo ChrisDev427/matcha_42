@@ -7,7 +7,7 @@ const path = require('path');
 let interests = [];
 
 async function updateUser(req, res){
-	// console.log("req.files = ", req.files);
+	console.log("req.files = ", req.files);
 	// if (!req.body || Object.keys(req.body).length === 0)
 	// {
 	// 	return res.status(400).json({ message: "No data" });
@@ -41,6 +41,12 @@ async function updateUser(req, res){
 		}
 		if (req.body.sexualPreferences)
 		{
+			if (req.body.sexualPreferences[0] && req.body.sexualPreferences[1])
+				req.body.sexualPreferences = "Both";
+			else if (req.body.sexualPreferences[0])
+				req.body.sexualPreferences = req.body.sexualPreferences[0]
+			else
+				req.body.sexualPreferences = req.body.sexualPreferences[1]
 			user.sexualPreferences = req.body.sexualPreferences;
 		}
 		if (req.body.age)

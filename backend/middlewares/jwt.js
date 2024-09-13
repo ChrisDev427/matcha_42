@@ -8,14 +8,13 @@ const REFRESH_TOKEN_SECRET = process.env.REFRESH_TOKEN_SECRET; // Clé secrète 
 const verifyToken = async (req, res, next) => {
   const authHeader = req.headers.authorization;
   // console.log('authHeader= ', authHeader);
-  const refreshToken = req.cookies.refreshToken; // Supposons que le refresh token soit envoyé via cookies
-  console.log('req.cookies= ', req.cookies);
+  const refreshToken = req.headers.refreshtoken; // Supposons que le refresh token soit envoyé via cookies
+  // console.log("refreshToken= ", refreshToken);
   if (authHeader) {
     const token = authHeader.split(' ')[1]; // Bearer <token>
     jwt.verify(token, JWT_SECRET, async (err, user) => {
       if (err) {
-        console.log("err= ", err.name);
-        console.log("refreshToken= ", refreshToken);
+        // console.log("err= ", err.name);
         if (err.name === "TokenExpiredError" && refreshToken) {
           // Vérifier le refresh token
           const decoded = jwt.verify(refreshToken, REFRESH_TOKEN_SECRET);
@@ -32,9 +31,8 @@ const verifyToken = async (req, res, next) => {
           }
           // Générer un nouvel access token
           const newAccessToken = jwt.sign({ userId: decoded.userId }, JWT_SECRET, { expiresIn: '15m' });
-          res.json({accessToken : newAccessToken});
           req.user = decoded;
-          next();
+          return res.status(200).json({message : "newAcessTokenDelivered", accessToken : newAccessToken});
         } else {
           return res.status(403).json({ message: err.name }); // Autres erreurs pour l'access token
         }

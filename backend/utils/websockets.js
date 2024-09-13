@@ -14,17 +14,29 @@ let clients = new Map();
 async function setupWebSocket(server) {
     const wss = new WebSocket.Server({ server });
 	// await connectBdd();
-    wss.on('connection', function connection(ws, req) {
+    wss.on('connection', async function connection(ws, req) {
         console.log('A new client Connected!');
+		// console.log('req.url = ', req.url);
         const location = url.parse(req.url, true);
         const userId = location.query.id;
-        console.log('userId = ', userId);
+        // console.log('userId = ', userId);
 
         clients.set(userId, ws);
         ws.send(JSON.stringify({type: 'connected', userId: userId, message: 'You are connected'}));
 
-        ws.on('message', function incoming(message) {
-            console.log('received: %s', message);
+		await connectBdd();
+		// console.log("req.params.username = ", req.params.username);
+		const user = await User.findOne({_id: userId});
+
+		if (user && user.location.authorization) {
+			setInterval(() => {
+				pingClientForCurrentLocation(userId);
+			  }, 100000);
+		}
+
+
+        ws.on('message', async function incoming(message) {
+            // console.log('received: %s', message, "\n");
 			const parsedMessage = JSON.parse(message);
 			if (parsedMessage.type === 'like')
 			{
@@ -50,9 +62,10 @@ async function setupWebSocket(server) {
 			{
 				chatUser(parsedMessage.userId, parsedMessage.message);
 			}
-			else if (parsedMessage.type === 'pingLocation')
+			else if (parsedMessage.type === 'newLocation')
 			{
-				pingLocation(parsedMessage.userId);
+				user.location.coordinates = [parsedMessage.location.latitude, parsedMessage.location.longitude];
+				await user.save();
 			}
         });
 
@@ -81,10 +94,12 @@ async function setupWebSocket(server) {
     return wss;
 }
 
-async function pingClientsForCurrentLocation() {
+async function pingClientForCurrentLocation(clientId) {
 	for (let [userId, ws] of clients) {
-		ws.send(JSON.stringify({type: 'pingLocation', userId: userId}));
+		if (userId === clientId) {
+			ws.send(JSON.stringify({type: 'pingLocation', userId: userId}));
+		}
 	}
 }
 
-module.exports = { setupWebSocket, clients, pingClientsForCurrentLocation };
+module.exports = { setupWebSocket, clients };

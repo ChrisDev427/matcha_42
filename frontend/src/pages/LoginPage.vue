@@ -1,9 +1,9 @@
-<template>  
+<template>
       <div class="login--form--container fade-In">
         <LoginForm></LoginForm>
       </div>
   </template>
-  
+
   <script>
   import LoginForm from '../components/forms/LoginForm.vue';
   export default {
@@ -13,7 +13,7 @@
     }
   };
   </script>
-  
+
   <style lang="scss">
   .login--form--container {
     height: 100vh;

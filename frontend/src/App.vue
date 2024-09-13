@@ -70,8 +70,9 @@ export default {
           const response = await fetchData("/verifyToken", {
             method: 'GET',
             headers: {
-              'Authorization': 'Bearer ' + localStorage.getItem('accessToken')
-            }
+              'Authorization': 'Bearer ' + localStorage.getItem('accessToken'),
+              'refreshToken': localStorage.getItem('refreshToken'),
+            },
           });
           const responseData = await response.json();
           if (response.status === 200) {
@@ -120,7 +121,7 @@ export default {
 #app {
   font-family: "Roboto", sans-serif;
   /* padding: 0px 20px; */
-  background: url(../public/src/couple-bg.jpg) fixed center/cover;
+  // background: url(../public/src/couple-bg.jpg) fixed center/cover;
 
   height: 100vh;
 }

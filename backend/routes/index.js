@@ -1,7 +1,20 @@
 var express = require('express');
 var router = express.Router();
 const multer = require('multer');
-const upload = multer({ dest: 'photos/tmp' });
+
+// Configuration du stockage
+const storage = multer.diskStorage({
+  destination: function (req, file, cb) {
+    cb(null, 'photos/tmp/'); // Dossier où les fichiers seront enregistrés
+  },
+  filename: function (req, file, cb) {
+    // Générer un nom de fichier unique
+    cb(null, Date.now() + '-' + file.originalname);
+  },
+});
+
+// Initialiser Multer avec le stockage configuré
+const upload = multer({ storage: storage });
 const verifyToken = require('../middlewares/jwt');
 const getLocationWithIp = require('../middlewares/getLocationWithIp');
 
@@ -19,13 +32,14 @@ router.post('/reSendEmail', require('../utils/reSendEmail'), (req, res) => {});
 
 router.get('/verifyEmail', require('../utils/verifyEmail'), (req, res) => {});
 
-router.post('/updateUser', verifyToken, getLocationWithIp, upload.array('photos'), require('../utils/updateUser'), (req, res) => {});
+router.post('/updateUser', verifyToken, upload.array('photos', 5), require('../utils/updateUser'), (req, res) => {});
 
-// router.get('/profile/:username', verifyToken, getLocationWithIp, require('../utils/getUser'), (req, res) => {});
 router.get('/profile/:username', verifyToken, require('../utils/getUser'), (req, res) => {});
 
 router.get('/verifyToken', verifyToken, (req, res) => {
-	res.send({ message: "Token is valid" });
+	res.status(200).json({ message: "Token is valid" });
 });
+
+router.get('/getPhotos/:username', verifyToken, require('../utils/getUserPhotos'), (req, res) => {});
 
 module.exports = router;

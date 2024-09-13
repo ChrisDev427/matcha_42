@@ -4,7 +4,7 @@ const User = require('../models/User');
 const connectBdd = require('./connectBdd');
 
 const JWT_SECRET = process.env.JWT_SECRET;
-const JWT_EXPIRES_IN = '10s';
+const JWT_EXPIRES_IN = '15m';
 const REFRESH_TOKEN_SECRET = process.env.REFRESH_TOKEN_SECRET;
 const REFRESH_TOKEN_EXPIRES_IN = '7d';
 
@@ -41,21 +41,28 @@ async function loginUser(req, res) {
         );
 
 		user.refreshToken = refreshToken;
-		 // Séparation de la chaîne en latitude et longitude
-        // if (req.body.location) {
-        //     const latitude = parseFloat(req.body.location.split('Latitude: ')[1].split(',')[0]);
-        //     const longitude = parseFloat(req.body.location.split('Longitude: ')[1]);
-        //     user.location.coordinates = [latitude, longitude];
-        //     user.location.authorization = true;
-        // }
+		//  Séparation de la chaîne en latitude et longitude
+        if (req.body.location) {
+            // console.log(req.body.location);
+            const latitude = parseFloat(req.body.location.latitude);
+            const longitude = parseFloat(req.body.location.longitude);
+            user.location.coordinates = [latitude, longitude];
+            user.location.authorization = true;
+        }
+        else {
+            user.location.authorization = false;
+        }
 		user.connected = true;
 		await user.save();
 
         // Envoyer les tokens au client
-        res.cookie('refreshToken', refreshToken, { httpOnly: true, secure: false, maxAge: 7 * 24 * 60 * 60 * 1000 }); // 7 jours en millisecondes
+        // res.setHeader('Access-Control-Allow-Origin', 'http://localhost:8082');  // Origine spécifique
+        // res.setHeader('Access-Control-Allow-Credentials', 'true');  // Permet les cookies
+        // res.cookie('refreshToken', refreshToken, { httpOnly: true, maxAge: 7 * 24 * 60 * 60 * 1000, path: '/' }); // 7 jours en millisecondes
         res.status(201).json({
             message: "Connexion réussie",
             accessToken : accessToken,
+            refreshToken: refreshToken,
             user: {
                 id: user._id,
                 username: user.username,

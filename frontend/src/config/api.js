@@ -19,7 +19,7 @@ export const fetchData = async (endpoint, options = {}) => {
     if (!response.ok) {
       throw new Error(`Erreur: ${response.statusText}`);
     }
-    return await response.json();
+    return response;
   } catch (error) {
     console.error('Erreur lors de la requête:', error);
     throw error;

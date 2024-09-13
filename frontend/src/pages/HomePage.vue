@@ -21,6 +21,8 @@
 <script>
 import { useI18n } from "vue-i18n";
 import MainPage from "@/pages/MainPage.vue";
+// import GeoLocation from '@/components/Geolocation.vue';
+// import { onMounted, onUnmounted } from "vue";
 
 export default {
   name: "HomePage",
@@ -37,34 +39,39 @@ export default {
     const accountCreate_btn = t("accountCreate_btn");
 
     // Initialisation de WebSocket
-    function initWebSocket() {
-          let ws = new WebSocket('ws://192.148.1.12:8081/?id=66406489327b4f1c5543f281');
+    // function initWebSocket() {
+    //       const userId = localStorage.getItem('userId');
+    //       let ws = new WebSocket('ws://192.148.1.12:8081/?id=' + userId);
 
-          ws.onopen = function() {
-          console.log('Connection is open ...');
-          let message = JSON.stringify({type: 'test', userId:'' , message: 'Hello Server!'});
-          ws.send(message);
-          };
+    //       ws.onopen = function() {
+    //         console.log('Connection is open ...');
+    //         let message = JSON.stringify({type: 'test', userId: userId , message: 'Hello Server!'});
+    //         ws.send(message);
+    //       };
 
-          ws.onmessage = function(messageEvent) {
-              console.log('Server says: ' + messageEvent.data);
-          };
+    //       ws.onmessage = function(messageEvent) {
+    //           console.log('Server says: ' + messageEvent.data);
+    //           // if (messageEvent.data.type === 'pingLocation') {
+    //               console.log('I PASSED HERE');
+    //               ws.send(JSON.stringify({type: 'newLocation', userId: userId, location: GeoLocation}));
+    //           // }
+    //       };
 
-          ws.onclose = function() {
-              console.log('Connection is closed.');
-          };
+    //       ws.onclose = function() {
+    //           console.log('Connection is closed.');
+    //       };
 
-          ws.onerror = function(error) {
-              console.log('Error detected: ' + error);
-          };
-    }
+    //       ws.onerror = function(error) {
+    //           console.log('Error detected: ' + error);
+    //       };
+    // }
 
-    // Nettoyer et fermer la connexion WebSocket lors du démontage du composant
-    function cleanupWebSocket(ws) {
-      if (ws) {
-        ws.close();
-      }
-    }
+    // // Nettoyer et fermer la connexion WebSocket lors du démontage du composant
+    // function cleanupWebSocket(ws) {
+    //   if (ws) {
+    //     ws.close();
+    //   }
+    // }
 
     function submitTest(ws) {
       let message = JSON.stringify({type: 'like', userId:'66406489327b4f1c5543f281' , message: {user: 'Axesnake', userLiked: 'Axou'}});
@@ -111,7 +118,7 @@ export default {
     // onMounted(initWebSocket);
     // onUnmounted(cleanupWebSocket);
 
-    return { submitTest, handleFileUpload, submitPhotos, accountCreate_btn, initWebSocket, cleanupWebSocket };
+    return { submitTest, handleFileUpload, submitPhotos, accountCreate_btn};
   },
 };
 </script>

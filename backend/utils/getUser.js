@@ -1,6 +1,6 @@
 const User = require('../models/User');
 const connectBdd = require('./connectBdd');
-let userProfile = require('../models/userProfile');
+let UserProfile = require('../models/userProfile');
 
 async function getUser(req, res){
 	await connectBdd();
@@ -10,9 +10,9 @@ async function getUser(req, res){
 		return res.status(404).json({ message: "User not found" });
 	}
 	// console.log("user = ", user.username);
-	userProfile = new userProfile(user);
-	console.log(userProfile);
-	res.status(200).json({ user: userProfile });
+	userProfile = new UserProfile(user);
+	// console.log("userProfile=", userProfile.getProfile());
+	res.status(200).json({ user: userProfile.getProfile() });
 }
 
 module.exports = getUser;
