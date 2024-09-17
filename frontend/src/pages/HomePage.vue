@@ -73,10 +73,10 @@ export default {
     //   }
     // }
 
-    function submitTest(ws) {
-      let message = JSON.stringify({type: 'like', userId:'66406489327b4f1c5543f281' , message: {user: 'Axesnake', userLiked: 'Axou'}});
-      ws.send(message);
-    }
+    // function submitTest(ws) {
+    //   let message = JSON.stringify({type: 'like', userId:'66406489327b4f1c5543f281' , message: {user: 'Axesnake', userLiked: 'Axou'}});
+    //   ws.send(message);
+    // }
 
     function handleFileUpload(event, selectedFiles) {
       selectedFiles.value = event.target.files;
@@ -118,7 +118,7 @@ export default {
     // onMounted(initWebSocket);
     // onUnmounted(cleanupWebSocket);
 
-    return { submitTest, handleFileUpload, submitPhotos, accountCreate_btn};
+    return { handleFileUpload, submitPhotos, accountCreate_btn};
   },
 };
 </script>

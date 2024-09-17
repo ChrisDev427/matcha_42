@@ -7,7 +7,7 @@ const path = require('path');
 let interests = [];
 
 async function updateUser(req, res){
-	console.log("req.files = ", req.files);
+	// console.log("req.files = ", req.files);
 	// if (!req.body || Object.keys(req.body).length === 0)
 	// {
 	// 	return res.status(400).json({ message: "No data" });
@@ -75,27 +75,38 @@ async function updateUser(req, res){
 				}
 			}
 		}
-		if (req.files)
-		{
-			const nbPhotosInDB = user.photos.length;
-			if (req.files.length + nbPhotosInDB > 5)
-			{
-				return res.status(400).json({ message: "You can't have more than 5 photos" });
-			}
+		if (req.files) {
 			const fs = require('fs');
-			const { resizeImage, compressImageToUnder1MB, imageToBase64 } = require('./photosHandler');
-			for (let i = 0; i < req.files.length; i++)
-			{
-				const photoPath = path.join(__dirname, "../" + req.files[i].path);
-				// console.log("photoPath = ", photoPath);
-				await resizeImage(photoPath, photoPath + "_resized", 500, 500);
-				await compressImageToUnder1MB(photoPath + "_resized", photoPath + "_compressed");
-				const newPhotoPath =  path.join(__dirname, "../photos/tmp/" + user.username + "_" + (i + (nbPhotosInDB + 1)) + ".jpg");
-				fs.renameSync(photoPath + "_resized", newPhotoPath);
-				const imageBase64 = await imageToBase64(newPhotoPath);
-				user.photos.push(imageBase64);
-				fs.rmSync(newPhotoPath);
-			}
+			const fsPromise = require('fs').promises;
+			const { resizeImage, compressImageToUnder1MB } = require('./photosHandler');
+
+			const photoUpload = req.files[0];
+			const imageIndex = req.body.imageIndex;
+			const photoPath = path.join(__dirname, "../" + photoUpload.path);
+			const extension = photoUpload.originalname.split('.').pop();
+
+			// Redimensionner l'image
+			const resizedImageFilename =  photoPath.slice(0, - extension.length - 1) + "_resized." + extension;
+			await resizeImage(photoPath, resizedImageFilename, 500, 500);
+
+			// Compresser l'image redimensionnée
+			const compressImageFilename = photoPath.slice(0, - extension.length - 1) + "_compress." + extension;
+			await compressImageToUnder1MB(resizedImageFilename, compressImageFilename);
+
+			// Définir le nouveau chemin pour l'image finale
+			const newPhotoPath = path.join(__dirname, "../photos/tmp/" + user.username + "_" + imageIndex + ".png");
+
+			// Renommer/déplacer le fichier compressé vers le nouveau chemin
+			fs.renameSync(compressImageFilename, newPhotoPath);
+
+			// Lire le fichier compressé en tant que Buffer
+			const imageBuffer = await fsPromise.readFile(newPhotoPath);
+
+			// Stocker l'image dans la base de données
+			user.photos[imageIndex] = imageBuffer;
+
+			// Supprimer les fichiers temporaires
+			// fs.rmSync(resizedImageFilename);
 		}
 		if (req.body.profilePicture)
 		{
@@ -106,7 +117,7 @@ async function updateUser(req, res){
 			user.profilePicture = req.body.profilePicture;
 		}
 		await user.save();
-		res.status(200).json({ message: "User updated" });
+		res.status(200).json({ message: "User updated", imageIndex: req.body.imageIndex });
 	} catch (error) {
 		console.log("Error in updateUser", error);
 		res.status(503).json({ message:  error.message });

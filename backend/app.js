@@ -16,8 +16,8 @@ var app = express();
 
 // Désactive CORS pour toutes les requêtes
 app.use(cors({
-  origin: 'http://localhost:8082',  // Remplace par le domaine d'où viennent les requêtes
-  credentials: true                 // Permet l'envoi et la réception des cookies
+  origin: 'http://localhost:8080',  // Remplace par le domaine d'où viennent les requêtes
+  credentials: true,                 // Permet l'envoi et la réception des cookies
 }));
 
 // view engine setup

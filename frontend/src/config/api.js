@@ -15,6 +15,7 @@ export const fetchData = async (endpoint, options = {}) => {
   };
 
   try {
+    console.log("api_base_url ", API_BASE_URL);
     const response = await fetch(`${API_BASE_URL}${endpoint}`, config);
     if (!response.ok) {
       throw new Error(`Erreur: ${response.statusText}`);

@@ -83,7 +83,7 @@ export default {
 
             }
 
-            await store.dispatch('initWebSocket');
+            // await store.dispatch('initWebSocket');
             await store.dispatch('getUserInfos', localStorage.getItem('userName'));
             store.commit('setIsReady', true);
             store.commit('setIsConnected', true);

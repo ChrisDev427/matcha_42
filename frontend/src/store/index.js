@@ -74,7 +74,7 @@ export const store = createStore({
     setIsLoading(state, value) { state.isLoading = value; },
     setIsLoadingStartApp(state, value) { state.isLoadingStartApp = value; },
     setIsConnected(state, value) { state.is_connected = value; },
-    setWebSocket(state, ws) { state.ws = ws; },
+    // setWebSocket(state, ws) { state.ws = ws; },
     setIsLoginFormSent(state, value) { state.is_login_form_sent = value; },
     setIsRegisterFormSent(state, value) { state.is_register_form_sent = value; },
 
@@ -86,66 +86,66 @@ export const store = createStore({
   },
 
   actions: {
-    closeWebSocket({state}) {
-      state.ws.close();
-    },
+    // closeWebSocket({state}) {
+    //   state.ws.close();
+    // },
 
 
-    initWebSocket({ commit, state }) {
-      const userId = localStorage.getItem("userId");
-      console.log ( "userId on websocket = ", userId);
-      commit(
-        "setWebSocket",
-        new WebSocket(
-          "ws://192.168.1.45:8081/?id=" + userId
-        )
-      );
+    // initWebSocket({ commit, state }) {
+    //   const userId = localStorage.getItem("userId");
+    //   console.log ( "userId on websocket = ", userId);
+    //   commit(
+    //     "setWebSocket",
+    //     new WebSocket(
+    //       "ws://192.168.1.45:8081/?id=" + userId
+    //     )
+    //   );
 
-      state.ws.onopen = function () {
-        console.log("Connection is open ...");
-        let message = JSON.stringify({
-          type: "test",
-          userId: userId,
-          message: "Hello Server!",
-        });
-        state.ws.send(message);
-      };
-      state.ws.onmessage = function (messageEvent) {
-        const data = JSON.parse(messageEvent.data);
-        console.log("Server says: " + data.type);
-        if (data.type === "pingLocation") {
-          // Obtenir la géolocalisation de l'utilisateur
-          navigator.geolocation.getCurrentPosition(
-            function (position) {
-              let location = {
-                latitude: position.coords.latitude,
-                longitude: position.coords.longitude,
-              };
-              let message = JSON.stringify({
-                type: "newLocation",
-                userId: localStorage.getItem("userId"),
-                location: location,
-              });
-              state.ws.send(message);
-              console.log("Envoyé newLocation :", message);
-            },
-            function (error) {
-              console.error("Erreur lors de la récupération de la position :", error);
-            }
-          );
-        }
-      };
-      state.ws.onclose = function () {
-        console.log("Connection is closed.");
-      };
-    },
+    //   state.ws.onopen = function () {
+    //     console.log("Connection is open ...");
+    //     let message = JSON.stringify({
+    //       type: "test",
+    //       userId: userId,
+    //       message: "Hello Server!",
+    //     });
+    //     state.ws.send(message);
+    //   };
+    //   state.ws.onmessage = function (messageEvent) {
+    //     const data = JSON.parse(messageEvent.data);
+    //     console.log("Server says: " + data.type);
+    //     if (data.type === "pingLocation") {
+    //       // Obtenir la géolocalisation de l'utilisateur
+    //       navigator.geolocation.getCurrentPosition(
+    //         function (position) {
+    //           let location = {
+    //             latitude: position.coords.latitude,
+    //             longitude: position.coords.longitude,
+    //           };
+    //           let message = JSON.stringify({
+    //             type: "newLocation",
+    //             userId: localStorage.getItem("userId"),
+    //             location: location,
+    //           });
+    //           state.ws.send(message);
+    //           console.log("Envoyé newLocation :", message);
+    //         },
+    //         function (error) {
+    //           console.error("Erreur lors de la récupération de la position :", error);
+    //         }
+    //       );
+    //     }
+    //   };
+    //   state.ws.onclose = function () {
+    //     console.log("Connection is closed.");
+    //   };
+    // },
 
     async submitRegisterForm({commit}, formData) {
       // store.commit('setIsLoading', true);
       console.log(formData);
       try {
         // Envoyer les données du formulaire au backend Node.js
-        const response = await fetch("/register-form", {
+        const response = await fetch("http://192.168.1.45:8081/register-form", {
           method: "POST",
           headers: {
             "Content-Type": "application/json",
@@ -201,7 +201,7 @@ export const store = createStore({
             commit("setUserName", localStorage.getItem("userName"));
             dispatch("getUserInfos", localStorage.getItem("userName"));
             // commit("setIsReady", true);
-            dispatch("initWebSocket");
+            // dispatch("initWebSocket");
             commit("setServerMessage", "success");
             break;
           case 401:

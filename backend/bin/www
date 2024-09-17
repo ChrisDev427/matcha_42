@@ -28,13 +28,6 @@ const { setupWebSocket } = require('../utils/websockets');
 
 const wss = setupWebSocket(server);
 
-// Ping clients for their current location every 30 seconds
-// const { pingClientsForCurrentLocation } = require('../utils/websockets');
-// setInterval(() => {
-// 	pingClientsForCurrentLocation(wss);
-//   }, 30000);
-
-
 /**
  * Listen on provided port, on all network interfaces.
  */

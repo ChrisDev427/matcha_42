@@ -6,10 +6,12 @@ const fs = require('fs');
 // const outputFile = path.join(__dirname, '../photos/tmp/IMG_5486_resized.jpg');
 
 async function compressImageToUnder1MB(inputPath, outputPath) {
+	// const inputPathName = path.parse(inputPath).name;
     let quality = 90;  // Démarrez avec une haute qualité.
 	let sizeInMB = fs.statSync(inputPath).size / 1024 / 1024;
 	if (sizeInMB < 1) {
 		console.log('Image déjà inférieure à 1 MB');
+		fs.renameSync(inputPath, outputPath);
 		return;
 	}
 	while (sizeInMB > 1 && quality > 10) {
@@ -19,9 +21,8 @@ async function compressImageToUnder1MB(inputPath, outputPath) {
 		sizeInMB = fs.statSync(outputPath).size / 1024 / 1024;  // Convertir en mégaoctets.
 		quality -= 10;  // Réduisez la qualité pour la prochaine itération si nécessaire.
 	}
-	const inputPathName = path.parse(inputPath).name;
 	fs.rmSync(inputPath);  // Supprimer l'image d'origine.
-	fs.renameSync(outputPath, path.join(path.parse(outputPath).dir, `${inputPathName}.jpg`));
+	fs.renameSync(inputPath, outputPath);
     console.log(`Image compressée à ${sizeInMB.toFixed(2)} MB avec une qualité de ${quality + 10}`);
 }
 

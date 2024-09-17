@@ -22,7 +22,7 @@ const getLocationWithIp = require('../middlewares/getLocationWithIp');
 
 router.post('/login', require('../utils/loginUser'), (req, res) => {});
 
-router.post('/submit-form', require('../utils/createUser'), (req, res) => {});
+router.post('/register-form', require('../utils/createUser'), (req, res) => {});
 
 router.post('/forgotPassword', require('../utils/forgotPassword'), (req, res) => {});
 

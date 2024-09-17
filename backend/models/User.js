@@ -1,6 +1,11 @@
 const mongoose = require('mongoose');
 const Schema = mongoose.Schema;
 
+// Helper function to ensure the photos array does not exceed 5 elements
+function arrayLimit(val) {
+  return val.length <= 5;
+}
+
 const userSchema = new Schema({
   username: { type: String, required: true, unique: true},
   password: { type: String, required: true },
@@ -16,8 +21,8 @@ const userSchema = new Schema({
   biography: { type: String, default: 'bio here' },
   age: { type: Number, default: null },
   interests: [{ type: String }], // Tags like #vegan, #geek, etc.
-  photos: [{ type: String}],//, validate: [arrayLimit, 'Cannot exceed 5 photos'] }],
-  profilePicture: { type: Number, default: 1},
+  photos: { type: [Buffer], default : [null, null, null, null, null], validate: [arrayLimit, 'Cannot exceed 5 photos'] },
+  profileicture: { type: Number, default: 0},
   fameRating: { type: Number, default: 0 }, // Fame rating can be calculated based on various criteria
   reported : { type: Number, default: 0},
   blackList: [{ type: Schema.Types.ObjectId, ref: 'User' }], // Array of user IDs who are blacklisted
@@ -38,12 +43,6 @@ const userSchema = new Schema({
 }, {
   timestamps: true, // Adds createdAt and updatedAt timestamps,
 });
-
-
-// Helper function to ensure the photos array does not exceed 5 elements
-// function arrayLimit(val) {
-//   return val.length <= 5;
-// }
 
 // To index the location field for geo-queries
 userSchema.index({ location: '2dsphere' });
