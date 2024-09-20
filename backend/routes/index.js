@@ -19,6 +19,9 @@ const verifyToken = require('../middlewares/jwt');
 const getLocationWithIp = require('../middlewares/getLocationWithIp');
 
 
+router.get('/', (req, res) => {
+  res.send("OK");
+});
 
 router.post('/login', require('../utils/loginUser'), (req, res) => {});
 

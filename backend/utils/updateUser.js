@@ -41,7 +41,9 @@ async function updateUser(req, res){
 		}
 		if (req.body.sexualPreferences)
 		{
-			if (req.body.sexualPreferences[0] && req.body.sexualPreferences[1])
+			// console.log("req.body.sexualPreferences = ", req.body.sexualPreferences);
+			if ((req.body.sexualPreferences[0] && req.body.sexualPreferences[1])
+				|| (!req.body.sexualPreferences[0] && !req.body.sexualPreferences[1]))
 				req.body.sexualPreferences = "Both";
 			else if (req.body.sexualPreferences[0])
 				req.body.sexualPreferences = req.body.sexualPreferences[0]

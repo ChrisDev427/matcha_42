@@ -5,6 +5,7 @@ class UserProfile {
 		this.firstname = user.firstname;
 		this.lastname = user.lastname;
 		this.connected = user.connected;
+		this.email = user.email;
 		this.lastConnection = user.lastConnection;
 		this.gender = user.gender;
 		this.sexualPreferences = user.sexualPreferences;
@@ -23,6 +24,7 @@ class UserProfile {
 			username: this.username,
 			firstname: this.firstname,
 			lastname: this.lastname,
+			email : this.email,
 			connected: this.connected,
 			lastConnection: this.lastConnection,
 			gender: this.gender,

@@ -16,18 +16,16 @@
       <div class="row--pictures">
         <div class="picture" v-for="(image, index) in images.slice(1, 3)" :key="index + 1">
           <img :src="image" alt="">
-          <p>{{ index + 1 }}</p>
           <span @click="triggerFileInput(index + 1)">
             <i class="fi fi-br-add"></i>
           </span>
-          <input type="file" :ref="'fileInput' + (index + 1)" @change="onFileChange($event, index + 1)">
+          <input type="file" :ref="'fileInput' + (index + 1)" @change="onFileChange($event, index + 1)" style="display: none;">
         </div>
       </div>
       <!-- Troisième rangée d'images -->
       <div class="row--pictures">
-        <div class="picture" v-for="(image, index) in images.slice(3, 5)" :key="index + 3">
+        <div class="picture" v-for="(image, index) in images.slice(3, 5)" :key="index + 3" >
           <img :src="image" alt="">
-          <p>{{ index + 3 }}</p>
           <span @click="triggerFileInput(index + 3)">
             <i class="fi fi-br-add"></i>
           </span>
@@ -82,7 +80,7 @@ export default {
           const imageUrl = URL.createObjectURL(blob);
           // Mettre à jour l'image dans le tableau
           if (imageUrl){
-            console.log('imageUrl', imageUrl);
+            // console.log('imageUrl', imageUrl);
             this.images[index] = imageUrl; // Ou l'index approprié
           }
         })
@@ -93,10 +91,14 @@ export default {
     },
 
     triggerFileInput(index) {
-      // Déclenche le clic sur l'input file correspondant
-      console.log('index', index);
-      this.$refs['fileInput' + index].click();
+      if (index === 0) {
+        this.$refs['fileInput' + index].click();
+      }
+      else {
+        this.$refs['fileInput' + index][0].click();
+      }
     },
+
     onFileChange(event, index) {
       const file = event.target.files[0];
       if (file && file.type.includes('image/')) {

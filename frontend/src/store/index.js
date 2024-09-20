@@ -20,7 +20,7 @@ export const store = createStore({
     isLoading: false,
     isLoadingStartApp: false,
     is_connected: false,
-    ws: null,
+    // ws: null,
     is_login_form_sent: false,
     is_register_form_sent: false,
     is_forgot_form_sent: false,
@@ -46,7 +46,7 @@ export const store = createStore({
     getIsLoading(state) { return state.isLoading; },
     getIsLoadingStartApp(state) { return state.isLoadingStartApp; },
     getIsConnected(state) { return state.is_connected; },
-    getWebSocket(state) { return state.ws; },
+    // getWebSocket(state) { return state.ws; },
     getIsLoginFormSent(state) { return state.is_login_form_sent; },
     getIsRegisterFormSent(state) { return state.is_register_form_sent; },
     getIsForgotFormSent(state) { return state.is_forgot_form_sent; },
@@ -145,7 +145,7 @@ export const store = createStore({
       console.log(formData);
       try {
         // Envoyer les données du formulaire au backend Node.js
-        const response = await fetch("http://192.168.1.45:8081/register-form", {
+        const response = await fetch("http://192.168.1.54:8081/register-form", {
           method: "POST",
           headers: {
             "Content-Type": "application/json",
@@ -183,7 +183,7 @@ export const store = createStore({
       console.log("submitLoginForm");
 
       try {
-        const response = await fetch("http://192.168.1.45:8081/login", {
+        const response = await fetch("http://192.168.1.54:8081/login", {
           method: "POST",
           headers: {
             "Content-Type": "application/json",

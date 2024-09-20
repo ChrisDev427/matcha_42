@@ -110,7 +110,7 @@ export default {
         const maxLengthBio = 150;
         const actualLengthBio = ref(0);
         const store = useStore();
-       
+
 
         const formData = ref({
             firstName: "",
@@ -121,6 +121,14 @@ export default {
             age: "",
             interests: [],
         });
+
+        const sexualPreferences = store.getters.getSexPref;
+        if (sexualPreferences === "Female") {
+            formData.value.sexualPreferences[1] = sexualPreferences;
+        }
+        else if (sexualPreferences === "Male") {
+            formData.value.sexualPreferences[0] = sexualPreferences;
+        }
 
         const agePlaceholder = store.getters.getAge;
         const ageOptions = Array.from({ length: 83 }, (_, i) => i + 18);
@@ -160,16 +168,16 @@ export default {
             actualLengthBio,
             agePlaceholder,
             ageOptions,
-      
+
         };
     },
     mounted() {
         // add existing interests
-        this.addTags();
+        this.addTags(); 
     },
     data() {
         // retrieve tags from db
-        const options = ["#Java", "#Vue.js", "#Javascript"];
+        const options = [];
         return {
             options,
         };
@@ -196,11 +204,25 @@ export default {
             this.formData.gender = value;
         },
         setSexualPref(value, index) {
+            const store = this.$store;
+            if (store.getters.getSexPref === value) {
+                this.formData.sexualPreferences[index] = store.getters.getSexPref;
+                store.commit("setSexPref", "");
+            }
+            console.log("setSexualPref function ", value, index);
+            // console.log("store.getters.getSexPref = ", store.getters.getSexPref);
+            // if (store.getters.getSexPref === value) {
+                // store.commit("setSexPref", "");
+            // }
+            // console.log("store.getters.getSexPref = ", store.getters.getSexPref);
+            // console.log("form before ", this.formData.sexualPreferences[index]);
             if (!this.formData.sexualPreferences[index]) {
                 this.formData.sexualPreferences[index] = value;
             } else {
+                console.log("I passed here")
                 this.formData.sexualPreferences[index] = "";
             }
+            // console.log("form ", this.formData.sexualPreferences[index]);
         },
     },
     computed: {
@@ -217,37 +239,15 @@ export default {
                 this.formData.lastName ||
                 this.formData.biography ||
                 this.formData.interests.length !== this.$store.getters.getInterests.length ||
-                this.formData.sexualPreferences[0] ||
-                this.formData.sexualPreferences[1] ||
+                // this.formData.sexualPreferences[0] ||
+                // this.formData.sexualPreferences[1] ||
                 this.formData.gender
             ) {
                 return true;
             }
             return false;
         },
-        // isFormValid() {
-        //         // Retrieve initial store data
-        //         const initialFirstName = this.$store.getters.getFirstName;
-        //         const initialLastName = this.$store.getters.getLastName;
-        //         const initialBio = this.$store.getters.getBio;
-        //         const initialAge = this.$store.getters.getAge;
-        //         const initialGender = this.$store.getters.getGender;
-        //         const initialInterests = this.$store.getters.getInterests;
-        //         const initialSexPref = this.$store.getters.getSexPref;
 
-        //         // Check if any form data has changed from the initial values
-        //         return (
-        //             this.formData.firstName !== initialFirstName ||
-        //             this.formData.lastName !== initialLastName ||
-        //             this.formData.biography !== initialBio ||
-        //             this.formData.age !== initialAge ||
-        //             this.formData.gender !== initialGender ||
-        //             this.formData.interests.length !== initialInterests.length ||
-        //             this.formData.sexualPreferences[0] !== initialSexPref[0] ||
-        //             this.formData.sexualPreferences[1] !== initialSexPref[1] ||
-        //             this.formData.interests.some((interest, index) => interest !== initialInterests[index])
-        //         );
-        //     }
     },
 };
 </script>
@@ -284,11 +284,11 @@ export default {
             font-weight: bold;
             font-size: 0.8rem;
             color: var(--dark-gray);
-            
-            
+
+
         }
         .input--needed {
-            
+
             span {
                 margin-left: 5px;
                 font-weight: 400;
@@ -425,10 +425,10 @@ export default {
                 transition: all 0.3s;
             }
 
-            button:hover {
-                background-color: #a602e7;
-                color: white;
-            }
+            // button:hover {
+            //     background-color: #a602e7;
+            //     color: white;
+            // }
 
             p {
                 margin: 5px 0 0 3px;

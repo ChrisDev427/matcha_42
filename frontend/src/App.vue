@@ -44,6 +44,7 @@ export default {
   setup() {
 
     const store = useStore();
+    console.log('store ', store);
     onMounted(() => {
 
       store.commit('setIsLoadingStartApp', true);
