@@ -119,7 +119,8 @@ async function updateUser(req, res){
 			user.profilePicture = req.body.profilePicture;
 		}
 		await user.save();
-		res.status(200).json({ message: "User updated", imageIndex: req.body.imageIndex });
+		// req.flash('success', 'User updated');
+		res.status(200).json({ message: "User updated", imageIndex: req.body.imageIndex, alert: "success" });
 	} catch (error) {
 		console.log("Error in updateUser", error);
 		res.status(503).json({ message:  error.message });

@@ -6,7 +6,7 @@ var path = require('path');
 var cookieParser = require('cookie-parser');
 var logger = require('morgan');
 const cors = require('cors');
-
+const session = require('express-session');
 const helmet = require('helmet');
 
 var indexRouter = require('./routes/index');
@@ -14,11 +14,13 @@ var usersRouter = require('./routes/users');
 
 var app = express();
 
+
 // Désactive CORS pour toutes les requêtes
 app.use(cors({
   origin: 'http://localhost:8080',  // Remplace par le domaine d'où viennent les requêtes
   credentials: true,                 // Permet l'envoi et la réception des cookies
 }));
+
 
 // view engine setup
 app.set('views', path.join(__dirname, 'views'));
@@ -27,6 +29,13 @@ app.set('view engine', 'twig');
 // Sécurisation des en-têtes HTTP
 app.use(helmet());
 
+app.use(session({
+  secret: 'axelfernandez',
+  resave: false,
+  saveUninitialized: true,
+  cookie: { secure: false }
+}))
+app.use(require('./middlewares/flash'));
 app.use(logger('dev'));
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
