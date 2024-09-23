@@ -27,11 +27,13 @@ router.post('/login', require('../utils/loginUser'), (req, res) => {});
 
 router.post('/register-form', require('../utils/createUser'), (req, res) => {});
 
-router.post('/forgotPassword', require('../utils/forgotPassword'), (req, res) => {});
+router.post('/resetPasswordSendEmail', require('../utils/resetPasswordSendEmail'), (req, res) => {});
 
 router.post('/resetPassword', require('../utils/resetPassword'), (req, res) => {});
 
-router.post('/reSendEmail', require('../utils/reSendEmail'), (req, res) => {});
+router.post('/reSendEmail', verifyToken, require('../utils/reSendEmail'), (req, res) => {});
+
+router.post('/resetEmail', verifyToken, require('../utils/resetEmail'), (req, res) => {});
 
 router.get('/verifyEmail', require('../utils/verifyEmail'), (req, res) => {});
 

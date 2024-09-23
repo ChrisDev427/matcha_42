@@ -39,7 +39,9 @@
 
 <script>
 
+import { fetchData } from "../../config/api";
 export default {
+
   mounted() {
     this.getPhotos();
   },
@@ -63,7 +65,7 @@ export default {
     },
 
     getPhoto(index) {
-      fetch('http://192.168.1.45:8081/getPhotos/' + localStorage.getItem('userName') + "?index=" + index, {
+      fetchData('/getPhotos/' + localStorage.getItem('userName') + "?index=" + index, {
         method: 'GET',
         headers: {
           'Authorization': 'Bearer ' + localStorage.getItem('accessToken'),
@@ -72,6 +74,9 @@ export default {
         .then((response) => {
           if (!response.ok) {
             throw new Error('Erreur lors de la récupération de la photo');
+          }
+          else if (response.status === 204) {
+            throw new Error('Aucune photo trouvée');
           }
           return response.blob(); // Traiter la réponse comme un Blob
         })
@@ -85,7 +90,7 @@ export default {
           }
         })
         .catch((error) => {
-          console.error('Erreur lors de la récupération des photos :', error);
+          console.log('Erreur lors de la récupération des photos :', error);
           // alert('Une erreur est survenue lors de la récupération des photos.');
         });
     },

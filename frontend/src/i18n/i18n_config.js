@@ -1,11 +1,11 @@
 import { createI18n } from 'vue-i18n'
 
 import {
-	aboutProjectFooter_en, 
-    aboutProjectFooter_fr, 
+	aboutProjectFooter_en,
+    aboutProjectFooter_fr,
     accountCreatedText_en,
-    accountCreatedText_fr, 
-		registrationErrorText_fr, 
+    accountCreatedText_fr,
+		registrationErrorText_fr,
 		registrationErrorText_en,
 		registrationErrorUsernameText_en,
 		registrationErrorUsernameText_fr,
@@ -30,7 +30,7 @@ export const i18n = createI18n({
       password: 'password',
       passwordConfirm: 'confirm password',
       accountCreate_btn: 'Create account',
-      
+
       registerTitle: 'create an account',
       registerSubTitle: 'and start swiping !',
 
@@ -50,11 +50,11 @@ export const i18n = createI18n({
       wrongPasswordText: 'Wrong Password !',
       emailNotVerifiedText: 'Please verify your email address to log in.',
 
-     
+      changeEmail : 'Change Email',
       reSendEmail: 'Resend email',
       reSendEmail_emailSent: 'Email sent',
       reSendEmail_userNotMatch: 'User not match !',
-      reSendEmail_alreadyVerified: 'E-mail already verified !',
+      reSendEmail_alreadyVerified: 'E-mail already used or verified !',
       reSendEmail_serverError: 'Server error, try again later...',
 
       forgotPassword: 'Forgot password ?',
@@ -110,13 +110,13 @@ export const i18n = createI18n({
       wrongPasswordText: 'Mot de passe incorrect !',
       emailNotVerifiedText: 'Merci de vérifier votre adresse e-mail pour vous connecter.',
 
-      
+      changeEmail : 'Changer l\'Email',
       reSendEmail: 'Renvoyer le mail',
       reSendEmail_emailSent: 'E-mail envoyé',
       reSendEmail_userNotMatch: 'Utilisateur non trouvé !',
-      reSendEmail_alreadyVerified: 'E-mail déjà verifié !',
+      reSendEmail_alreadyVerified: 'E-mail déjà utilisé ou verifié !',
       reSendEmail_serverError: 'Erreur serveur, veuillez réessayer plus tard...',
-      
+
 
       forgotPassword: 'Mot de passe oublié ?',
       forgotPasswordEmaiSentSuccess: 'Un email a été envoyé,\

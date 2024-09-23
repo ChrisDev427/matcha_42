@@ -26,7 +26,7 @@ async function renderHTML(template, data) {
 async function sendEmail(to, refreshToken) {
   try {
 	let subject = 'Matcha : Verify Your Email';
-	let html = await renderHTML('mailVerif.twig', { url: process.env.SERVER_URL + '/verifyEmail', token: refreshToken});
+	let html = await renderHTML('mailVerif.twig', { url: process.env.FRONT_URL + '/verifyEmail', token: refreshToken});
 	console.log('sending email');
     let info = await transporter.sendMail({
       from: '"Matcha Email-Vérif" transcendence-pong@outlook.com',
@@ -44,7 +44,7 @@ async function sendEmail(to, refreshToken) {
 async function sendEmailResetPassword(to, refreshToken) {
   try {
   let subject = 'Matcha : Reset Password';
-  let html = await renderHTML('passwordForgot.twig', { url: process.env.SERVER_URL + '/resetPassword', token: refreshToken, email: to});
+  let html = await renderHTML('passwordForgot.twig', { url: process.env.FRONT_URL + '/resetPassword', token: refreshToken, email: to});
   console.log('sending email');
     let info = await transporter.sendMail({
       from: '"Matcha Email-Vérif" transcendence-pong@outlook.com',

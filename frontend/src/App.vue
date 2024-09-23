@@ -42,7 +42,6 @@ export default {
   },
 
   setup() {
-
     const store = useStore();
     console.log('store ', store);
     onMounted(() => {
@@ -86,8 +85,14 @@ export default {
 
             // await store.dispatch('initWebSocket');
             await store.dispatch('getUserInfos', localStorage.getItem('userName'));
-            store.commit('setIsReady', true);
-            store.commit('setIsConnected', true);
+            if (store.getters.getVerified === true) {
+              store.commit('setIsReady', true);
+              store.commit('setIsConnected', true);
+            }
+            else {
+              store.commit('setIsReady', true);
+              store.commit('setIsConnected', false);
+            }
 
           } else if (response.status >= 400) {
 

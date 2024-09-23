@@ -1,5 +1,6 @@
 import { createStore } from "vuex";
 import { fetchData } from "../config/api";
+// import { get, set } from "core-js/core/dict";
 
 export const store = createStore({
   state: {
@@ -7,13 +8,15 @@ export const store = createStore({
     user_name: "",
     first_name: "",
     last_name: "",
+    verified: false,
     email: "",
     age: '',
-    gender: 'Male',
+    gender: '',
     sex_pref: '',
     bio: '',
-    interests: ['#tatoo'],
+    interests: [''],
     photos: [],
+    alertMessage: '',
 
     // Website initialize
     is_ready: false,
@@ -33,6 +36,7 @@ export const store = createStore({
     getUserName(state) { return state.user_name; },
     getFirstName(state) { return state.first_name; },
     getLastName(state) { return state.last_name; },
+    getVerified(state) { return state.verified; },
     getEmail(state) { return state.email; },
     getAge(state) { return state.age; },
     getGender(state) { return state.gender; },
@@ -54,6 +58,8 @@ export const store = createStore({
     getIsFormSent(state) { return state.is_form_sent; },
 
     getServerMessage(state) { return state.server_message; },
+
+    getAlertMessage: (state) => state.alertMessage,
   },
 
   mutations: {
@@ -62,6 +68,7 @@ export const store = createStore({
     setFirstName(state, value) { state.first_name = value; },
     setLastName(state, value) { state.last_name = value; },
     setEmail(state, value) { state.email = value; },
+    setVerified(state, value) { state.verified = value; },
     setAge(state, value) { state.age = value; },
     setGender(state, value) { state.gender = value; },
     setSexPref(state, value) { state.sex_pref = value; },
@@ -83,6 +90,13 @@ export const store = createStore({
     setIsFormSent(state, value) { state.is_form_sent = value; },
 
     setServerMessage(state, value) { state.server_message = value; },
+
+    setAlertMessage(state, message) {
+      state.alertMessage = message;
+    },
+    clearAlertMessage(state) {
+      state.alertMessage = '';
+    },
   },
 
   actions: {
@@ -145,7 +159,7 @@ export const store = createStore({
       console.log(formData);
       try {
         // Envoyer les données du formulaire au backend Node.js
-        const response = await fetch("http://192.168.1.54:8081/register-form", {
+        const response = await fetchData("/register-form", {
           method: "POST",
           headers: {
             "Content-Type": "application/json",
@@ -183,7 +197,7 @@ export const store = createStore({
       console.log("submitLoginForm");
 
       try {
-        const response = await fetch("http://192.168.1.54:8081/login", {
+        const response = await fetchData("/login", {
           method: "POST",
           headers: {
             "Content-Type": "application/json",
@@ -199,6 +213,10 @@ export const store = createStore({
             localStorage.setItem("userId", responseData.user.id);
             localStorage.setItem("userName", responseData.user.username);
             commit("setUserName", localStorage.getItem("userName"));
+            if (responseData.user.verified === false) {
+              commit("setServerMessage", "emailNotVerif");
+              break;
+            }
             dispatch("getUserInfos", localStorage.getItem("userName"));
             // commit("setIsReady", true);
             // dispatch("initWebSocket");
@@ -208,9 +226,9 @@ export const store = createStore({
             if (responseData.message === "Wrong Password") {
               commit("setServerMessage", "wrongPassword");
             }
-            if (responseData.message === "Email not verified") {
-              commit("setServerMessage", "emailNotVerif");
-            }
+            // if (responseData.message === "Email not verified") {
+            //   commit("setServerMessage", "emailNotVerif");
+            // }
             break;
           case 404:
             commit("setServerMessage", "loginFail");
@@ -307,12 +325,12 @@ export const store = createStore({
       }
     },
 
-  async changeEmailForm({ commit }, { formData, router }) {
+  async changeEmailForm({ commit }, formData) {
 
     console.log("changeEmailForm");
-
+    // console.log(formData);
     try {
-      const response = await fetchData("/updateUser", {
+      const response = await fetchData("/resetEmail", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -321,19 +339,22 @@ export const store = createStore({
         body: JSON.stringify(formData),
       });
       const responseData = await response.json();
-      console.log(responseData);
+      console.log("responseData",responseData);
       switch (response.status) {
         case 200:
-          commit("setServerMessage", "emailUpdated");
+          commit("setServerMessage", responseData.alert);
           setTimeout(() => {
             store.commit("setIsConnected", false);
             localStorage.clear();
-            store.getters.getWebSocket.close();
-            router.push({ name: "LoginPage" });
+            // store.getters.getWebSocket.close();
+            // router.push({ name: "LoginPage" });
           }, 5000);
           break;
         case 503:
-          commit("setServerMessage", "serverError");
+          commit("setServerMessage", responseData.alert);
+          break;
+        default :
+          commit("setServerMessage", responseData.alert);
           break;
         }
         // Gérer la réponse du backend si nécessaire
@@ -348,10 +369,7 @@ export const store = createStore({
   async updateUserInfosForm({ commit }, formData ) {
 
     console.log("updateUserInfosForm");
-    console.log(formData);
-
-
-
+    // console.log(formData);
     try {
       const response = await fetchData("/updateUser", {
         method: "POST",
@@ -367,27 +385,29 @@ export const store = createStore({
       switch (response.status) {
         case 200:
           console.log("profil Updated");
-
+          commit('setAlertMessage', responseData.alert);
           break;
         case 503:
+          commit('setAlertMessage', responseData.alert || 'Erreur du serveur.');
           console.log("server error");
+
 
           break;
         }
         // Gérer la réponse du backend si nécessaire
       } catch (error) {
       console.error("Error submitting form:", error);
+      commit('setAlertMessage', 'Une erreur est survenue lors de la soumission du formulaire.');
     } finally {
       // commit("setIsFormSent", true);
       commit("setIsLoading", false);
+      setTimeout(() => {
+        commit("clearAlertMessage");
+      }, 5000);
     }
   },
 
-
-
 },
-
-
 
   modules: {},
 });

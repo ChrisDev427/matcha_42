@@ -35,7 +35,7 @@ app.use(session({
   saveUninitialized: true,
   cookie: { secure: false }
 }))
-app.use(require('./middlewares/flash'));
+
 app.use(logger('dev'));
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));

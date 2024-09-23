@@ -22,10 +22,6 @@ async function loginUser(req, res) {
             return res.status(401).json({ message: "Wrong Password" });
         }
 
-		if (!user.verified) {
-			return res.status(401).json({ message: "Email not verified" });
-		}
-
         // Création du access token
         const accessToken = jwt.sign(
             { userId: user._id, email: user.email },
@@ -41,6 +37,20 @@ async function loginUser(req, res) {
         );
 
 		user.refreshToken = refreshToken;
+
+        // if (!user.verified) {
+
+		// 	return res.status(401).json({ message: "Email not verified",
+        //         accessToken : accessToken,
+        //         refreshToken: refreshToken,
+        //         user: {
+        //         id: user._id,
+        //         username: user.username,
+        //         email: user.email,
+        //         verified: user.verified
+        //     }
+        //      });
+		// }
 		//  Séparation de la chaîne en latitude et longitude
         if (req.body.location) {
             // console.log(req.body.location);
@@ -52,6 +62,7 @@ async function loginUser(req, res) {
         else {
             user.location.authorization = false;
         }
+
 		user.connected = true;
 		await user.save();
 
@@ -66,7 +77,8 @@ async function loginUser(req, res) {
             user: {
                 id: user._id,
                 username: user.username,
-                email: user.email
+                email: user.email,
+                verified: user.verified,
             }
         });
     } catch (error) {

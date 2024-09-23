@@ -16,7 +16,7 @@ async function updateUser(req, res){
 		await connectBdd();
 		const user = await User.findOne({_id: req.user.userId});
 		if (!user) {
-			return res.status(404).json({ message: "User not found" });
+			return res.status(404).json({ alert: {type: "warning", message: "Utilisateur non trouvé"}});
 		}
 		if (req.body.firstName) {
 			user.firstname = req.body.firstName;
@@ -25,6 +25,10 @@ async function updateUser(req, res){
 			user.lastname = req.body.lastName;
 		}
 		if (req.body.email) {
+			emailAlreadyExists = await User.findOne({ email: req.body.email });
+			if (emailAlreadyExists && emailAlreadyExists._id != user._id) {
+				return res.status(200).json({ alert: {type: "warning", message: "Email déjà utilisé"}});
+			}
 			user.email = req.body.email;
 			user.verified = false;
 		}
@@ -55,7 +59,7 @@ async function updateUser(req, res){
 		{
 			if (req.body.age < 18 || req.body.age > 100)
 			{
-				return res.status(400).json({ message: "Age must be between 18 and 100" });
+				return res.status(400).json({ alert : {type: "warning", message: "Âge invalide"}});
 			}
 			user.age = req.body.age;
 		}
@@ -65,7 +69,7 @@ async function updateUser(req, res){
 			{
 				if (!req.body.interests[i].startsWith("#"))
 				{
-					return res.status(400).json({ message: "Interest must start with #" });
+					return res.status(400).json({ alert : {type: "warning", message: "Intérêt invalide"}});
 				}
 				if (!user.interests.includes(req.body.interests[i]))
 				{
@@ -114,16 +118,15 @@ async function updateUser(req, res){
 		{
 			if (req.body.profilePicture < 1 || req.body.profilePicture > user.photos.length)
 			{
-				return res.status(400).json({ message: "Invalid profile picture" });
+				return res.status(400).json({ alert: {type: "warning", message: "Index de l'image de profil invalide"}});
 			}
 			user.profilePicture = req.body.profilePicture;
 		}
 		await user.save();
-		// req.flash('success', 'User updated');
-		res.status(200).json({ message: "User updated", imageIndex: req.body.imageIndex, alert: "success" });
+		res.status(200).json({imageIndex: req.body.imageIndex, alert: {type: "success", message: "Utilisateur mis à jour avec succès"}});
 	} catch (error) {
 		console.log("Error in updateUser", error);
-		res.status(503).json({ message:  error.message });
+		res.status(503).json({ alert: {type: "warning", message: "Erreur lors de la mise à jour de l'utilisateur"}});
 	}
 }
 

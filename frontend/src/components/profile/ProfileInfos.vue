@@ -42,7 +42,7 @@
             </div>
             <div class="btn--row">
                 <div class="btn--col">
-                    <h4>Genre</h4>
+                    <h4 class="input--needed">Genre<span v-if="!formData.gender && !$store.getters.getGender">&#9733;</span></h4>
                     <button id="male" type="button" @click="setGender('Male')" :class="{
                         'btn--pushed':
                             formData.gender === 'Male' ||
@@ -83,13 +83,16 @@
             </div>
         </form>
         <div class="text--btn">
-            <router-link class="router--btn" :to="{ name: 'ResetPasswordPage', params: {} }">
+            <button @click="passwordResetMessage()" class="router--btn">
                 <TextButton :btnName="$t('resetPasswordBtn')"></TextButton>
-            </router-link>
+            </button>
             <p>-</p>
-            <router-link class="router--btn" :to="{ name: 'ChangeEmailPage', params: {} }">
+            <RouterLink class="router--btn" :to="{ name: 'ChangeEmailPage', params: {} }">
                 <TextButton :btnName="$t('changeEmailBtn')"></TextButton>
-            </router-link>
+            </RouterLink>
+        </div>
+        <div v-if="passwordResetAction" class="password--reset--msg">
+            <p> check your mailbox </p>
         </div>
     </div>
 </template>
@@ -99,6 +102,8 @@ import Multiselect from "vue-multiselect";
 import { ref, watch } from "vue";
 import { useStore } from "vuex";
 import TextButton from "@/components/TextButton.vue";
+import { fetchData } from "@/config/api";
+// import { set } from "core-js/core/dict";
 
 export default {
     name: "ProfileInfos",
@@ -110,7 +115,23 @@ export default {
         const maxLengthBio = 150;
         const actualLengthBio = ref(0);
         const store = useStore();
+        let passwordResetAction = ref(false);
 
+        async function passwordResetMessage() {
+            passwordResetAction.value = true;
+            await fetchData("/resetPasswordSendEmail", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                    "authorization": "bearer " + localStorage.getItem('accessToken'),
+                },
+                body: JSON.stringify({ email: store.getters.getEmail }),
+            });
+            setTimeout(() => {
+                passwordResetAction.value = false;
+            }, 5000);
+        //  const responseData = await response.json();
+        }
 
         const formData = ref({
             firstName: "",
@@ -168,12 +189,13 @@ export default {
             actualLengthBio,
             agePlaceholder,
             ageOptions,
-
+            passwordResetMessage,
+            passwordResetAction,
         };
     },
     mounted() {
         // add existing interests
-        this.addTags(); 
+        this.addTags();
     },
     data() {
         // retrieve tags from db
@@ -227,6 +249,18 @@ export default {
     },
     computed: {
         isFormValid() {
+            // if (
+            //     // this.$store.getters.getAge === this.formData.age &&
+            //     // this.$store.getters.getGender === this.formData.gender &&
+            //     // this.formData.interests === this.$store.getters.getInterests &&
+            //     // this.formData.sexualPreferences[0] === this.$store.getters.getSexPref &&
+            //     // this.formData.sexualPreferences[1] === this.$store.getters.getSexPref &&
+            //     this.formData.firstName === this.$store.getters.getFirstName &&
+            //     this.formData.lastName === this.$store.getters.getLastName &&
+            //     this.formData.biography === this.$store.getters.getBio
+            // ) {
+            //     return false;
+            // }
 
             if ( (!this.$store.getters.getAge && !this.formData.age) ||
                 (!this.$store.getters.getGender && !this.formData.gender) ||
@@ -239,9 +273,12 @@ export default {
                 this.formData.lastName ||
                 this.formData.biography ||
                 this.formData.interests.length !== this.$store.getters.getInterests.length ||
-                // this.formData.sexualPreferences[0] ||
-                // this.formData.sexualPreferences[1] ||
-                this.formData.gender
+                this.formData.sexualPreferences[0] ||
+                this.formData.sexualPreferences[1] ||
+
+                // (!this.formData.sexualPreferences[0] && !this.formData.sexualPreferences[1]) ||
+                this.formData.gender ||
+                (!this.formData.sexualPreferences[0] && !this.formData.sexualPreferences[1])
             ) {
                 return true;
             }

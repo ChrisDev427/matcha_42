@@ -3,11 +3,13 @@ const connectBdd = require('./connectBdd');
 const bcrypt = require('bcrypt');
 const saltRounds = 10;
 
-async function resetPassord(req, res){
+async function resetPassword(req, res){
 	try {
+		console.log("req.body", req.body);
+		// console.log("req.query", req.query);
 		await connectBdd();
-		const tokenEmail = req.query.token;
-		const email = req.query.email;
+		const tokenEmail = req.body.token;
+		const email = req.body.email;
 		if (!tokenEmail || !email) {
 			return res.status(400).json({ message: "token and email are required" });
 		}
@@ -34,4 +36,4 @@ async function resetPassord(req, res){
 	}
 }
 
-module.exports = resetPassord;
+module.exports = resetPassword;

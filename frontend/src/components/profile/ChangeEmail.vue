@@ -12,17 +12,16 @@
                 </button>
             </form>
         </div>
-
-        <div v-if="$store.getters.getServerMessage === 'emailUpdated'">
+        <div v-if="$store.getters.getServerMessage.type === 'success'">
             <h3 v-html="replace_newLine_to_br_tags($t('changeEmailSuccess'))"></h3>
         </div>
-       
-        <div v-if="$store.getters.getServerMessage === 'serverError'">
-            <h3>{{ $t("serverErrorText") }}</h3>
+
+        <div v-if="$store.getters.getServerMessage.type === 'warning'">
+            <h3>{{ $store.getters.getServerMessage.message }}</h3>
         </div>
 
-        <div v-if="$store.getters.getServerMessage === 'serverError' || $store.getters.getServerMessage === ''" class="return--btn">
-            <span @click="goToProfilePage"><i class="fa-solid fa-circle-arrow-left"></i></span>
+        <div v-if="$store.getters.getServerMessage.type === 'warning' || $store.getters.getServerMessage === ''" class="return--btn">
+            <span @click="goToPreviousPage"><i class="fa-solid fa-circle-arrow-left"></i></span>
         </div>
     </div>
 </template>
@@ -37,11 +36,14 @@ export default {
     name: "ChangeEmail",
 
     methods: {
-        goToProfilePage() {
-            this.$router.push({ name: "ProfilePage" });
-            this.$store.commit("setServerMessage", '');
-
-        },
+    goToPreviousPage() {
+      if (window.history.length > 1) {
+        this.$router.back();
+      } else {
+        this.$router.push({ name: "LoginPage" });
+      }
+      this.$store.commit("setServerMessage", '');
+    },
     },
 
     setup() {
@@ -71,10 +73,11 @@ export default {
         function submitForm(event) {
             console.log("submitFormChangeEmail");
             event.preventDefault();
-            
-            
+
+
             // Récupérer les données du formulaire
             const formData = {
+                username : store.getters.getUserName,
                 email: event.target.email.value,
             };
             setTimeout(() => {
@@ -82,7 +85,7 @@ export default {
                 // store.commit("setIsFormSent", true);
                 // store.commit("setIsLoading", false);
                 // store.commit("setServerMessage", 'serverError');
-                store.dispatch("changeEmailForm", formData, this.router);
+                store.dispatch("changeEmailForm", formData);
             }, 1000);
         }
 

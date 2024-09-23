@@ -1,12 +1,19 @@
 <template>
-  <div class="profile--page fade-In">
+  <div v-if="this.$store.getters.getIsConnected" class="profile--page fade-In">
     <div class="profile--main--container">
+      <div v-if="alert" :class="['alert', alert.type]">
+        {{ alert.message }}
+      </div>
       <div class="profile--container">
         <ProfileInfos></ProfileInfos>
         <ProfilePictures></ProfilePictures>
       </div>
     </div>
   </div>
+  <div v-else class="profile--page fade-In">
+    <h1>Vous devez être connecté pour accéder à cette page</h1>
+  </div>
+
 </template>
 
 <script>
@@ -17,12 +24,37 @@ export default {
   components: {
     ProfileInfos,
     ProfilePictures,
-  }
+  },
+  computed: {
+    alert() {
+      console.log('alert', this.$store.getters.getAlertMessage);
+      return this.$store.getters.getAlertMessage;
+    }
+  },
 
 };
 </script>
 
 <style lang="scss">
+
+.alert.warning {
+  padding: 10px;
+  margin-bottom: 15px;
+  border: 1px solid #f5c6cb;
+  background-color: #f8d7da;
+  color: #721c24;
+  border-radius: 5px;
+}
+
+.alert.success {
+  padding: 10px;
+  margin-bottom: 15px;
+  border: 1px solid #c3e6cb;
+  background-color: #d4edda;
+  color: #155724;
+  border-radius: 5px;
+}
+
 .profile--page {
 
   display: flex;

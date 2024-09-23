@@ -1,6 +1,6 @@
 <template>
   <div class="login--error--email--container fade-In">
-    
+
     <div class="text">
       <h3>{{ $t("errorTitle") }}</h3>
       <p
@@ -15,10 +15,13 @@
       ></span>
     </div>
     <div class="send--email--verif">
-      
+
       <TextButton :class="{ hide: reSendEmailClicked }" :btnName="$t('reSendEmail')" @click="sendEmail()"></TextButton>
-      
-      <div :class="{ spinner: reSendEmailClicked && !serverResponse}"></div>
+      <br>
+      <router-link class="router--btn" :to="{ name: 'ChangeEmailPage', params: {} }">
+                <TextButton :btnName="$t('changeEmailBtn')"></TextButton>
+            </router-link>
+      <div :class="{ spinner: reSendEmailClicked  && !serverResponse}"></div>
 
       <span
         :class="{ hide: !reSendEmailClicked }"
@@ -34,18 +37,21 @@
     </div>
   </div>
 </template>
-  
+
   <script>
 // import { useI18n } from "vue-i18n";
 import { replace_newLine_to_br_tags } from "@/libft/libft.js";
 import { ref } from "vue";
 import TextButton from '@/components/TextButton.vue';
+import { fetchData } from "../../config/api";
 
 export default {
   name: "RegisterErrorEmailVerif",
+
   components: {
     TextButton,
   },
+
   props: {
     username: String,
   },
@@ -55,13 +61,22 @@ export default {
       this.$store.commit('setIsLoginFormSent', false);
       this.$store.commit('setServerMessage', '');
       this.$router.push({ name: 'LoginPage' });
-    }
+    },
+    showChangeEmailForm() {
+      this.reSendEmailClicked = true;
+      this.changeEmailClicked = true;
+    },
   },
 
   setup(props) {
 
     const reSendEmailClicked = ref(false);
     const serverResponse = ref(null);
+
+    let inputs = ref({
+      email: "",
+    });
+
 
     async function sendEmail() {
       console.log("reSendEmail function ", props.username);
@@ -70,11 +85,11 @@ export default {
         username: props.username,
       };
       try {
-     
-        const response = await fetch("/reSendEmail", {
+        const response = await fetchData("/reSendEmail", {
           method: "POST",
           headers: {
             "Content-Type": "application/json",
+            "authorization": "bearer " + localStorage.getItem('accessToken'),
           },
           body: JSON.stringify(formData),
         });
@@ -99,8 +114,9 @@ export default {
         console.error("Error reSendEmail:", error);
       }
     }
+
     return {
-      // i18n,
+      inputs,
       serverResponse,
       replace_newLine_to_br_tags,
       sendEmail,
@@ -109,8 +125,35 @@ export default {
   },
 };
 </script>
-  
+
   <style lang=scss>
+
+.register--form {
+    display: grid;
+    justify-items: center;
+
+    input {
+      padding: 6px;
+      margin: 10px;
+      width: 100%;
+      border: none;
+      outline: none;
+      border-radius: 8px;
+      text-align: center;
+      font-weight: 600;
+      // font-size: 1.2rem;
+      background-color: var(--purple-placeholder-bg);
+      color: var(--purple);
+    }
+
+    input::placeholder {
+      color: white;
+      font-weight: 400;
+
+      /* Couleur du placeholder */
+    }
+  }
+
 .login--error--email--container {
   position: relative;
   min-height: 170px;

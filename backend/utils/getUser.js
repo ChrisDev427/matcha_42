@@ -9,6 +9,9 @@ async function getUser(req, res){
 	if (!user) {
 		return res.status(404).json({ message: "User not found" });
 	}
+	else if (user.verified === false) {
+		return res.status(401).json({ message: "User not verified" });
+	}
 	// console.log("user = ", user.username);
 	userProfile = new UserProfile(user);
 	// console.log("userProfile=", userProfile.getProfile());
