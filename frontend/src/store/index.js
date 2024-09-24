@@ -296,7 +296,7 @@ export const store = createStore({
       console.log("forgotPasswordForm");
 
       try {
-        const response = await fetchData("/forgotPassword", {
+        const response = await fetchData("/resetPasswordSendEmail", {
           method: "POST",
           headers: {
             "Content-Type": "application/json",

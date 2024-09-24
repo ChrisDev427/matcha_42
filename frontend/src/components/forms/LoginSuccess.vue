@@ -33,7 +33,7 @@ export default {
 
     onMounted(goToMainPage);
     return {
-     
+
       replace_newLine_to_br_tags,
       goToMainPage,
     };

@@ -14,6 +14,7 @@ async function resetPasswordSendEmail(req, res){
 
 		newToken = new UUID().toString();
 		user.refreshToken = newToken;
+		await user.save();
 
 		await sendEmailResetPassword(user.email, newToken);
 		res.status(200).json({ message: "Email sent" });

@@ -5,34 +5,37 @@ const saltRounds = 10;
 
 async function resetPassword(req, res){
 	try {
-		console.log("req.body", req.body);
-		// console.log("req.query", req.query);
 		await connectBdd();
 		const tokenEmail = req.body.token;
 		const email = req.body.email;
+		const password = req.body.password;
+		const confirmPassword = req.body.confirmPassword;
 		if (!tokenEmail || !email) {
-			return res.status(400).json({ message: "token and email are required" });
+			return res.status(400).json({ alert : { type : "warning",  message: "token and email are required" }});
 		}
         const user = await User.findOne({email : email});
         if (!user) {
-            return res.status(404).json({ message: "email not match" });
+            return res.status(404).json({ alert : { type : "warning",  message: "email not match" }});
         }
 
 		if (user.refreshToken !== tokenEmail) {
-			return res.status(400).json({ message: "token not match" });
+			return res.status(400).json({ alert : { type : "warning",  message: "token not match" }});
 		}
 		user.refreshToken = null;
 		if (!req.body.password) {
-			return res.status(400).json({ message: "password is required" });
+			return res.status(400).json({ alert : { type : "warning",  message: "password is required" }});
 		}
-		const hash = await bcrypt.hash(req.body.password, saltRounds);
+		if (password !== confirmPassword) {
+			return res.status(400).json({ alert : { type : "warning",  message: "passwords do not match" }});
+		}
+		const hash = await bcrypt.hash(password, saltRounds);
 		user.password = hash;
 		await user.save();
-		res.status(200).json({ message: "Password updated" });
+		res.status(200).json({ alert : { type : "success",  message: "Password updated" }});
 	}
 	catch (error) {
 		console.log("Error in forgotPassword", error);
-		res.status(503).json({ message: error.message });
+		res.status(503).json({alert : { type : "warning",  message: error.message }});
 	}
 }
 
