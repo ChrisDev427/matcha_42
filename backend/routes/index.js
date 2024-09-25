@@ -47,4 +47,7 @@ router.get('/verifyToken', verifyToken, (req, res) => {
 
 router.get('/getPhotos/:username', verifyToken, require('../utils/getUserPhotos'), (req, res) => {});
 
+// router.get('/browseUsers', verifyToken, require('../utils/browseUsers'), (req, res) => {});
+router.get('/browseUsers', require('../utils/browseUsers'), (req, res) => {});
+
 module.exports = router;

@@ -1,5 +1,20 @@
 <template>
   <div class="main--page--container">
+    <section class="main--page--research">
+
+    </section>
+    <section class="main--page--profile">
+      <div class="profile--container">
+        <div class="profile--card">
+          <img src="" alt="profile picture" />
+        </div>
+        <div class="profile--infos">
+          <h2>Username</h2>
+          <p>Age</p>
+          <p>Location</p>
+          <p>Tags</p>
+        </div>
+    </section>
    <h1>MAIN PAGE</h1>
     </div>
 </template>

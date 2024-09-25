@@ -13,6 +13,7 @@ const userSchema = new Schema({
   lastname: { type: String, required: true },
   email: { type: String, required: true, unique: true },
   verified: { type: Boolean, default: false },
+  ready: { type: Boolean, default: false },
   refreshToken: { type: String , default: 'None'},
   connected: { type: Boolean, default: false },
   lastConnection: { type: Date, default: null },
@@ -22,23 +23,23 @@ const userSchema = new Schema({
   age: { type: Number, default: null },
   interests: [{ type: String }], // Tags like #vegan, #geek, etc.
   photos: { type: [Buffer], default : [null, null, null, null, null], validate: [arrayLimit, 'Cannot exceed 5 photos'] },
-  profileicture: { type: Number, default: 0},
+  profilePicture: { type: Number, default: 0},
   fameRating: { type: Number, default: 0 }, // Fame rating can be calculated based on various criteria
   reported : { type: Number, default: 0},
   blackList: [{ type: Schema.Types.ObjectId, ref: 'User' }], // Array of user IDs who are blacklisted
   location: {
-	authorization: { type: Boolean, default: false },
-	type: { type: String, default: 'Point' }, // GeoJSON type
-    coordinates: { type: [Number], default: [0, 0] } // Longitude, Latitude
+	  authorization: { type: Boolean, default: false },
+	  type: { type: String, default: 'Point' }, // GeoJSON type
+      coordinates: { type: [Number], default: [0, 0] } // Longitude, Latitude
   },
   viewedBy: [{ type: Schema.Types.ObjectId, ref: 'User' }], // Array of user IDs who viewed the profile
   likedBy: [{ type: Schema.Types.ObjectId, ref: 'User' }], // Array of user IDs who liked the profile
   matcha: [{ type: Schema.Types.ObjectId, ref: 'User' }], // Array of user IDs who matched each other
   notifications: [{ // Array of notifications
-	title: { type: String, required: true },
-	body: { type: String, required: true },
-	viewed : { type: Boolean, default: false },
-	date: { type: Date, default: Date.now }
+	  title: { type: String, required: true },
+	  body: { type: String, required: true },
+	  viewed : { type: Boolean, default: false },
+	  date: { type: Date, default: Date.now }
   }],
 }, {
   timestamps: true, // Adds createdAt and updatedAt timestamps,

@@ -122,6 +122,13 @@ async function updateUser(req, res){
 			}
 			user.profilePicture = req.body.profilePicture;
 		}
+		if (!user.ready)
+		{
+			if (user.age && user.gender && user.sexualPreferences && user.interests.length > 0 && user.photos[0])
+			{
+				user.ready = true;
+			}
+		}
 		await user.save();
 		res.status(200).json({imageIndex: req.body.imageIndex, alert: {type: "success", message: "Utilisateur mis à jour avec succès"}});
 	} catch (error) {
