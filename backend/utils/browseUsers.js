@@ -4,25 +4,21 @@ const { ObjectId } = require('mongodb');
 
 module.exports = async function browseUsers (req, res) {
 
-	console.log("req.username", req.query.username);
-
 	await connectBdd();
 	const { location, tags, ageGap, fameRatingGap, filterBy, sortBy } = req.query;
 
-	// const user = await User.findOne({username: req.username});
 	const user = await User.findOne({username: req.query.username});
 	if (!user) {
-	return res.status(404).json({ message: "User not found" });
+		return res.status(404).json({ message: "User not found" });
 	}
 
-	const userLocation = user.location.coordinates;
 	const userTags = user.interests;
-	const userAge = user.age;
-	const userFameRating = user.fameRating;
-	const locationForQuery = location ? location : userLocation;
+	const userLocation = user.location.coordinates;
+	const id = new ObjectId(user._id)
 
 	const pipeline = [];
 
+	// Filtre sur le genre souhaité
 	if (user.sexualPreferences === 'Male' || user.sexualPreferences === 'Female'){
 		pipeline.push(
 		{
@@ -32,14 +28,27 @@ module.exports = async function browseUsers (req, res) {
 		});
 	}
 
-	const id = new ObjectId(user._id)
-	const locationCoordinates = user.location.coordinates;
-
+	/* Filtres de base :
+		- Utilisateur prêt (qui a renseigner son profil)
+		- Utilisateur non blacklisté
+		- Utilisateur non vu
+		- Utilisateur non liké
+		- Utilisateur non matché
+		- Utilisateur différent de l'utilisateur courant
+		Ajout de champs calculés :
+		- distance
+		- commonTags
+		- fameRatingGap
+		Tri par :
+		- commonTags
+		- distance
+		- fameRatingGap
+	*/
 	pipeline.push(
 	{
 		$match: {
 			$and: [
-				{ ready : true },
+				{ ready : true }, // A reactiver
 				{ _id: { $nin: [id] } },
 				{ likedBy: { $nin: [id] } },
 				{ match: { $nin: [id] } },
@@ -53,19 +62,19 @@ module.exports = async function browseUsers (req, res) {
 			fameRatingGap: {
 				$abs: { $subtract: ["$fameRating", user.fameRating] }
 			},
-			// distance: {
-			// 	$sqrt: {
-			// 		$add: [
-			// 			{ $pow: [{ $subtract: ["$location.coordinates.0", locationCoordinates[0]] }, 2] },
-			// 			{ $pow: [{ $subtract: ["$location.coordinates.1", locationCoordinates[1]] }, 2] }
-			// 		]
-			// 	}
-			// },
+			distance: {
+				$sqrt: {
+					$add: [
+						{ $pow: [{ $subtract: [{ $arrayElemAt: ["$location.coordinates", 0] }, userLocation[0]] }, 2] },
+						{ $pow: [{ $subtract: [{ $arrayElemAt: ["$location.coordinates", 1] }, userLocation[1]] }, 2] }
+					]
+				}
+			},
 			commonTags: {
 				$size: {
-					$setIntersection: [
-						"$interests",
-						userTags
+					$ifNull: [
+						{ $setIntersection: [userTags, "$interests"] },
+						[]
 					]
 				}
 			}
@@ -74,18 +83,19 @@ module.exports = async function browseUsers (req, res) {
 	{
 		$sort: {
 			commonTags: -1,       // Premier critère : plus de tags communs
-			// distance: 1,          // Deuxième critère : distance plus proche
+			distance: 1,          // Deuxième critère : distance plus proche
 			fameRatingGap: 1      // Troisième critère : fameRatingGap plus faible
 		}
 	});
 
-	// Application du filtre
+
+	// Application du filtre demandé
 	if (filterBy && filterBy.type === "age") {
 		pipeline.push(
 			{
 				$match: {
 					age: {
-						$eq: userAge
+						$eq: parseInt(filterBy.value)
 					}
 				}
 			}
@@ -95,8 +105,8 @@ module.exports = async function browseUsers (req, res) {
 			{
 				$match: {
 					fameRating: {
-						$gte: userFameRating + filterBy.value,
-						$lte: userFameRating - filterBy.value
+						$gte: parseInt(filterBy.value),
+						$lte: parseInt(filterBy.value) + 50
 					}
 				}
 			}
@@ -106,26 +116,23 @@ module.exports = async function browseUsers (req, res) {
 			{
 				$match: {
 					interests: {
-						$in: filterBy.value
+						$in: filterBy.value // envoyer un tableau, attention au # (%23)
 					}
 				}
 			}
 		);
-	} else if (filterBy === "location") {
-		pipeline.push(
-			{
-				$match: {
-					location: {
-						$near: {
-							$geometry: {
-								type: "Point",
-								coordinates: userLocation
-							},
-							$maxDistance: filterBy.value
-						}
-					}
-				}
-			}
+	} else if (filterBy && filterBy.type === "location") {
+		pipeline.unshift({
+			$geoNear: {
+				near: {
+				  type: "Point",
+				  coordinates: userLocation,
+				},
+				distanceField: "distance",
+				maxDistance: parseInt(filterBy.value), // en mètres
+				spherical: true
+			  }
+		}
 		);
 	}
 
@@ -133,8 +140,8 @@ module.exports = async function browseUsers (req, res) {
 	if (ageGap && ageGap.min || ageGap && ageGap.max)
 	{
 		const ageRange = {};
-		if (ageGap.min) ageRange.$gte = ageGap.min;
-		if (ageGap.max) ageRange.$lte = ageGap.max;
+		if (ageGap.min) ageRange.$gte = parseInt(ageGap.min);
+		if (ageGap.max) ageRange.$lte = parseInt(ageGap.max);
 		pipeline.push({
 			$match: {
 				age: ageRange
@@ -144,8 +151,8 @@ module.exports = async function browseUsers (req, res) {
 	if (fameRatingGap && fameRatingGap.min || fameRatingGap && fameRatingGap.max)
 	{
 		const fameRatingRange = {};
-		if (fameRatingGap.min) fameRatingRange.$gte = fameRatingGap.min;
-		if (fameRatingGap.max) fameRatingRange.$lte = fameRatingGap.max;
+		if (fameRatingGap.min) fameRatingRange.$gte = parseInt(fameRatingGap.min);
+		if (fameRatingGap.max) fameRatingRange.$lte = parseInt(fameRatingGap.max);
 		pipeline.push({
 			$match: {
 				fameRating: fameRatingRange
@@ -154,51 +161,76 @@ module.exports = async function browseUsers (req, res) {
 	}
 	if (tags)
 	{
-		const tagsArray = tags.split(",");
+		// const tagsArray = tags.split(",");
 		pipeline.push({
 			$match: {
 				interests: {
-					$in: tagsArray
+					$in: tags // envoyer un tableau, attention au # (%23)
 				}
 			}
 		});
 	}
-	if (location)
+	if (location) // format : location=longitude,latitude
 	{
-		pipeline.push({
-			$match: {
-				location: {
-					$near: {
-						$geometry: {
-							type: "Point",
-							coordinates: locationForQuery
-						}
-					}
-				}
-			}
-		});
+		const locationArray = location.split(",");
+		pipeline.unshift({
+			$geoNear: {
+				near: {
+				  type: "Point",
+				  coordinates: [parseFloat(locationArray[0]), parseFloat(locationArray[1])],
+				},
+				distanceField: "distance",
+				maxDistance: 10000, // en mètres
+				spherical: true
+			  }
+		}
+		);
 	}
 
-	// tri final
-	if (sortBy === "age") {
+	// tri final si demandé
+	if (sortBy === "ageIncreasing") {
 		pipeline.push({
 			$sort: {
 				age: 1
 			}
 		});
-	} else if (sortBy === "fameRating") {
+	} else if (sortBy === "ageDecreasing") {
+		pipeline.push({
+			$sort: {
+				age: -1
+			}
+		});
+	} else if (sortBy === "fameRatingIncreasing") {
+		pipeline.push({
+			$sort: {
+				fameRating: 1
+			}
+		});
+	} else if (sortBy === "fameRatingDecreasing") {
 		pipeline.push({
 			$sort: {
 				fameRating: -1
 			}
 		});
-	} else if (sortBy === "location") {
+	} else if (sortBy === "locationIncreasing") {
 		pipeline.push({
 			$sort: {
 				location: 1
 			}
 		});
-	} else if (sortBy === "commonTags") { // a voir si c'est juste
+	} else if (sortBy === "locationDecreasing") {
+		pipeline.push({
+			$sort: {
+				location: -1
+			}
+		});
+	} else if (sortBy === "tagsIncreasing") { // a voir si c'est juste
+		pipeline.push({
+			$sort: {
+				commonTags: 1
+			}
+		});
+	} else if (sortBy === "tagsDecreasing") { // a voir si c'est juste
 		pipeline.push({
 			$sort: {
 				commonTags: -1
@@ -211,6 +243,7 @@ module.exports = async function browseUsers (req, res) {
 		$limit: 10
 	});
 
+	// projection finale
 	pipeline.push({
 		$project: {
 			_id: 0,
