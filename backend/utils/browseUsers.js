@@ -5,9 +5,17 @@ const { ObjectId } = require('mongodb');
 module.exports = async function browseUsers (req, res) {
 
 	await connectBdd();
+	/* formatage attendus :
+		- location=longitude,latitude ou null
+		- tags[tag1,tag2,tag3] ou null
+		- ageGap{min: 18, max: 30} ou null
+		- fameRatingGap{min: 0, max: 100} ou null
+		- filterBy{type: "age", value: 25} ou null
+		- sortBy: "ageIncreasing" ou null
+	*/
 	const { location, tags, ageGap, fameRatingGap, filterBy, sortBy } = req.query;
 
-	const user = await User.findOne({username: req.query.username});
+	const user = await User.findOne({username: req.username}); // a voir pour recuperation du user
 	if (!user) {
 		return res.status(404).json({ message: "User not found" });
 	}
