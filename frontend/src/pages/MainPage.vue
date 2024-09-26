@@ -14,6 +14,7 @@
           <p>Location</p>
           <p>Tags</p>
         </div>
+      </div>
     </section>
    <h1>MAIN PAGE</h1>
     </div>

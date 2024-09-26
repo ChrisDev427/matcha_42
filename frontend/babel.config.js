@@ -1,5 +1,7 @@
+const { config } = require("@fortawesome/fontawesome-svg-core");
+
 module.exports = {
   presets: [
-    '@vue/cli-plugin-babel/preset'
-  ]
+    '@babel/preset-env',
+  ],
 }

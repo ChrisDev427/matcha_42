@@ -26,12 +26,12 @@ const userSchema = new Schema({
   profilePicture: { type: Number, default: 0},
   fameRating: { type: Number, default: 0 }, // Fame rating can be calculated based on various criteria
   reported : { type: Number, default: 0},
-  blackList: [{ type: Schema.Types.ObjectId, ref: 'User' }], // Array of user IDs who are blacklisted
   location: {
-	  authorization: { type: Boolean, default: false },
+    authorization: { type: Boolean, default: false },
 	  type: { type: String, default: 'Point' }, // GeoJSON type
-      coordinates: { type: [Number], default: [0, 0] } // Longitude, Latitude
+    coordinates: { type: [Number], default: [0, 0] } // Longitude, Latitude
   },
+  blackList: [{ type: Schema.Types.ObjectId, ref: 'User' }], // Array of user IDs who are blacklisted
   viewedBy: [{ type: Schema.Types.ObjectId, ref: 'User' }], // Array of user IDs who viewed the profile
   likedBy: [{ type: Schema.Types.ObjectId, ref: 'User' }], // Array of user IDs who liked the profile
   matcha: [{ type: Schema.Types.ObjectId, ref: 'User' }], // Array of user IDs who matched each other
