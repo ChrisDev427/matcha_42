@@ -127,7 +127,8 @@ export default {
 #app {
   font-family: "Roboto", sans-serif;
   /* padding: 0px 20px; */
-  // background: url(../public/src/couple-bg.jpg) fixed center/cover;
+  background: url(../public/src/couple-bg.jpg) fixed center/cover;
+  // background-color: rgb(34, 34, 34);
 
   height: 100vh;
 }
