@@ -4,15 +4,27 @@
 			  <img src="" alt="profile picture" />
 		</div>
 		<div class="profile--infos">
-		  <h2>Username</h2>
-		  <p>Age</p>
-		  <p>Location</p>
+		  <!-- <h2>{{ userSaw.username }}</h2> -->
+		  <!-- <p>{{ userSaw.age }}</p> -->
+		  <p>{{ userSaw }}</p>
 		  <p>Tags</p>
 		</div>
 	</div>
 </template>
 
 <script>
+
+import { defineProps } from 'vue';
+
+export default {
+  name: "ProfileCard",
+
+  setup() {
+	defineProps({
+		userSaw: Object
+	})
+  },
+};
 
 </script>
 
@@ -37,6 +49,7 @@
     width: 500px;   height: 600px;
     border-radius: 30px;
     transition: .5s;
+	cursor : pointer;
 }
 
 	.card-container .profile--card{
@@ -50,7 +63,7 @@
     box-shadow: 0 25px 15px rgb(0 0 0 / 50%)
 
 }
-.card-container:hover .profile--card{
+.card-container:active .profile--card{
     transform: perspective(1000px) rotateY(180deg);
 }
 .card-container .profile--infos{
@@ -66,7 +79,7 @@
     box-shadow: 0 25px 15px rgb(0 0 0 / 50%)
 
 }
-.card-container:hover .profile--infos{
+.card-container:active .profile--infos{
     transform: perspective(1000px) rotateY(0);
 }
 

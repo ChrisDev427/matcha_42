@@ -1,12 +1,11 @@
 <template>
-  <button @click="getTenUsers">Get 10 Users</button>
   <div class="main--page--container">
     <section class="main--page--research">
 
     </section>
     <section class="main--page--profile">
       <div class="profile--container">
-        <ProfileCard></ProfileCard>
+        <ProfileCard  :user="tenUsers[0]"></ProfileCard>
       </div>
     </section>
     </div>
@@ -16,6 +15,7 @@
 import ProfileCard from '@/components/ProfileCard.vue';
 import { fetchData } from '../config/api';
 import { ref } from "vue";
+import { onMounted } from "vue";
 
 export default {
     name: "MainPage",
@@ -26,7 +26,12 @@ export default {
 
     // },
 
-setup() {
+
+    setup() {
+  onMounted(() => {
+    console.log("mounted");
+    getTenUsers();
+  });
 
   const tenUsers = ref([]);
 
@@ -39,8 +44,11 @@ setup() {
       });
       const data = await response.json();
       console.log("data", data);
+      if (data) {
+        tenUsers.value = data.users;
       }
-    if (tenUsers.length === 0) {
+      }
+    if (tenUsers.value.length === 0) {
       getTenUsers();
     }
     return { tenUsers };
