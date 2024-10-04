@@ -6,11 +6,12 @@ import { i18n } from './i18n/i18n_config.js'
 
 /* import font awesome icon component */
 import '@fortawesome/fontawesome-free/css/all.css'
-import '@fortawesome/fontawesome-free/js/all.js'
+import '@fortawesome/fontawesome-free/js/all'
 import "@flaticon/flaticon-uicons/css/all/all.css";
 
 // import '@vue-multiselect/dist/vue-multiselect.min.css';
-import '../../frontend/node_modules/vue-multiselect/dist/vue-multiselect.css'
+import 'vue-multiselect/dist/vue-multiselect.css'
+import './index.css'
 
 const VueApp = createApp(App);
 

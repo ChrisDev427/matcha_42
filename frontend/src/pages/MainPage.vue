@@ -5,7 +5,8 @@
     </section>
     <section class="main--page--profile">
       <div class="profile--container">
-        <ProfileCard  :user="tenUsers[0]"></ProfileCard>
+        <ProfileCard v-if="tenUsers && tenUsers.length > 0" :user="tenUsers[0]" />
+          <p v-else>Chargement des utilisateurs...</p>
       </div>
     </section>
     </div>

@@ -56,12 +56,13 @@ module.exports = async function browseUsers (req, res) {
 	{
 		$match: {
 			$and: [
-				{ ready : true }, // A reactiver
+				{ ready : true },
 				{ _id: { $nin: [id] } },
 				{ likedBy: { $nin: [id] } },
 				{ match: { $nin: [id] } },
 				{ viewedBy: { $nin: [id] } },
 				{ blacklist: { $nin: [id] } },
+				{ username : "Axou2"}
 			],
 		},
 	},

@@ -13,11 +13,12 @@
 
         <Header></Header>
         <router-view> </router-view>
-        <Footer></Footer>
+        <!-- <Footer></Footer> -->
 
     </div>
   </div>
 </template>
+
 
 <script>
 import Header from "./components/header/HeaderCmp.vue";
@@ -61,50 +62,50 @@ export default {
         }
       }, 2000);
 
-      });
+    });
 
-      async function checkAccessToken() {
-        console.log('check Token');
+    async function checkAccessToken() {
+      console.log('check Token');
 
-        try {
-          const response = await fetchData("/verifyToken", {
-            method: 'GET',
-            headers: {
-              'Authorization': 'Bearer ' + localStorage.getItem('accessToken'),
-              'refreshToken': localStorage.getItem('refreshToken'),
-            },
-          });
-          const responseData = await response.json();
-          if (response.status === 200) {
+      try {
+        const response = await fetchData("/verifyToken", {
+          method: 'GET',
+          headers: {
+            'Authorization': 'Bearer ' + localStorage.getItem('accessToken'),
+            'refreshToken': localStorage.getItem('refreshToken'),
+          },
+        });
+        const responseData = await response.json();
+        if (response.status === 200) {
 
-            if (responseData.accessToken) {
-              localStorage.setItem('accessToken', responseData.accessToken)
-              console.log('ACCESS Token');
+          if (responseData.accessToken) {
+            localStorage.setItem('accessToken', responseData.accessToken)
+            console.log('ACCESS Token');
 
-            }
+          }
 
-            // await store.dispatch('initWebSocket');
-            await store.dispatch('getUserInfos', localStorage.getItem('userName'));
-            if (store.getters.getVerified === true) {
-              store.commit('setIsReady', true);
-              store.commit('setIsConnected', true);
-            }
-            else {
-              store.commit('setIsReady', true);
-              store.commit('setIsConnected', false);
-            }
-
-          } else if (response.status >= 400) {
-
+          // await store.dispatch('initWebSocket');
+          await store.dispatch('getUserInfos', localStorage.getItem('userName'));
+          if (store.getters.getVerified === true) {
+            store.commit('setIsReady', true);
+            store.commit('setIsConnected', true);
+          }
+          else {
             store.commit('setIsReady', true);
             store.commit('setIsConnected', false);
           }
-        } catch (error) {
-          console.error('Erreur lors de la récupération du profil :', error);
+
+        } else if (response.status >= 400) {
+
           store.commit('setIsReady', true);
           store.commit('setIsConnected', false);
         }
+      } catch (error) {
+        console.error('Erreur lors de la récupération du profil :', error);
+        store.commit('setIsReady', true);
+        store.commit('setIsConnected', false);
       }
+    }
   }
 };
 </script>
@@ -127,8 +128,8 @@ export default {
 #app {
   font-family: "Roboto", sans-serif;
   /* padding: 0px 20px; */
-  background: url(../public/src/couple-bg.jpg) fixed center/cover;
-  // background-color: rgb(34, 34, 34);
+  // background: url(../public/src/couple-bg.jpg) fixed center/cover;
+  background-color: rgb(34, 34, 34);
 
   height: 100vh;
 }
@@ -174,12 +175,14 @@ export default {
     0% {
       transform: rotate(0deg);
     }
+
     100% {
       transform: rotate(360deg);
     }
   }
 }
+
 .no-scroll {
-    overflow: hidden;
+  overflow: hidden;
 }
 </style>

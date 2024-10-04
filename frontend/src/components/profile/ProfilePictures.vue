@@ -120,7 +120,7 @@ export default {
         formData.append('imageIndex', index);
 
         // Envoyer l'image au serveur
-        fetch('http://192.168.1.45:8081/updateUser', {
+        fetch('http://192.168.1.60:8081/updateUser', {
           method: 'POST',
           body: formData,
           headers: {

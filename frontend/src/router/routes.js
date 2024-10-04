@@ -8,6 +8,7 @@ import LoginPage from '@/pages/LoginPage.vue';
 import ForgotPassPage from '@/pages/ForgotPassPage.vue';
 import ResetPasswordPage from '@/pages/ResetPasswordPage.vue';
 import ChangeEmailPage from '@/pages/ChangeEmailPage.vue';
+import test from '@/pages/test.vue';
 
 export const routes = [
     { path: '/', name:'HomePage', component: HomePage },
@@ -18,6 +19,7 @@ export const routes = [
     { path: '/ForgotPassPage/', name: 'ForgotPassPage', component: ForgotPassPage },
     { path: '/ResetPasswordPage/', name: 'ResetPasswordPage', component: ResetPasswordPage },
     { path: '/ChangeEmailPage/', name: 'ChangeEmailPage', component: ChangeEmailPage },
+    { path: '/test/', name: 'test', component: test },
 
 ]
 

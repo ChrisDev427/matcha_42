@@ -15,6 +15,7 @@ const storage = multer.diskStorage({
 
 // Initialiser Multer avec le stockage configuré
 const upload = multer({ storage: storage });
+
 const verifyToken = require('../middlewares/jwt');
 const getLocationWithIp = require('../middlewares/getLocationWithIp');
 
